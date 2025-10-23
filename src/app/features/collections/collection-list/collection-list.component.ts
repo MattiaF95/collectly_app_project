@@ -1,0 +1,291 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { CollectionService } from '../../../core/services/collection.service';
+import {
+  Collection,
+  COLLECTION_TYPES,
+} from '../../../core/models/collection.model';
+import { CreateCollectionDialogComponent } from '../../../shared/components/collection-choice-dialog/collection-choice-dialog.component';
+
+@Component({
+  selector: 'app-collection-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatMenuModule,
+  ],
+  template: `
+    <div class="collections-container">
+      <div class="header">
+        <h1>Le Mie Collezioni</h1>
+        <button mat-raised-button color="primary" (click)="createCollection()">
+          <mat-icon>add</mat-icon>
+          Nuova Collezione
+        </button>
+      </div>
+
+      <div class="collections-grid" *ngIf="collections.length > 0">
+        <mat-card
+          *ngFor="let collection of collections"
+          class="collection-card"
+          (click)="openCollection(collection._id!)"
+        >
+          <div class="card-header" [style.background-color]="collection.color">
+            <div class="type-badge">
+              <mat-icon>{{ getTypeIcon(collection.type) }}</mat-icon>
+              {{ getTypeLabel(collection.type) }}
+            </div>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              (click)="$event.stopPropagation()"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="editCollection(collection)">
+                <mat-icon>edit</mat-icon>
+                <span>Modifica</span>
+              </button>
+              <button mat-menu-item (click)="deleteCollection(collection)">
+                <mat-icon>delete</mat-icon>
+                <span>Elimina</span>
+              </button>
+            </mat-menu>
+          </div>
+
+          <mat-card-content>
+            <h2>{{ collection.name }}</h2>
+            <p *ngIf="collection.subtitle">{{ collection.subtitle }}</p>
+
+            <div class="stats">
+              <div class="stat">
+                <mat-icon>inventory_2</mat-icon>
+                <span>{{ collection.itemCount || 0 }} oggetti</span>
+              </div>
+              <div class="stat" *ngIf="collection.totalValue">
+                <mat-icon>euro</mat-icon>
+                <span>€{{ collection.totalValue.toFixed(2) }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="empty-state" *ngIf="collections.length === 0">
+        <mat-icon>collections_bookmark</mat-icon>
+        <h2>Nessuna Collezione</h2>
+        <p>Crea la tua prima collezione per iniziare</p>
+        <button mat-raised-button color="primary" (click)="createCollection()">
+          <mat-icon>add</mat-icon>
+          Crea Collezione
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [
+    `
+      .collections-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        h1 {
+          color: #2c3e50;
+          margin: 0;
+        }
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+
+      .collections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+
+        .collection-card {
+          cursor: pointer;
+          transition: all 0.3s ease;
+          overflow: hidden;
+
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+          }
+
+          .card-header {
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .type-badge {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              font-size: 0.9rem;
+              font-weight: 500;
+
+              mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+              }
+            }
+
+            button {
+              color: white;
+            }
+          }
+
+          mat-card-content {
+            padding: 1.5rem;
+
+            h2 {
+              color: #2c3e50;
+              margin: 0 0 0.5rem 0;
+              font-size: 1.5rem;
+            }
+
+            p {
+              color: #666;
+              margin: 0 0 1rem 0;
+            }
+
+            .stats {
+              display: flex;
+              gap: 1.5rem;
+
+              .stat {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #666;
+
+                mat-icon {
+                  font-size: 20px;
+                  width: 20px;
+                  height: 20px;
+                  color: #3498db;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+
+        mat-icon {
+          font-size: 80px;
+          width: 80px;
+          height: 80px;
+          color: #ccc;
+          margin-bottom: 1rem;
+        }
+
+        h2 {
+          color: #666;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          color: #999;
+          margin-bottom: 2rem;
+        }
+
+        button {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+    `,
+  ],
+})
+export class CollectionListComponent implements OnInit {
+  private collectionService = inject(CollectionService);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
+
+  collections: Collection[] = [];
+
+  ngOnInit() {
+    this.loadCollections();
+  }
+
+  loadCollections() {
+    this.collectionService.getCollections().subscribe({
+      next: (collections) => {
+        this.collections = collections;
+      },
+      error: (error) => {
+        console.error('Errore caricamento collezioni:', error);
+      },
+    });
+  }
+
+  createCollection() {
+    this.dialog.open(CreateCollectionDialogComponent, {
+      width: '600px',
+      disableClose: false,
+      panelClass: 'create-collection-dialog',
+    });
+  }
+
+  openCollection(id: string) {
+    this.router.navigate(['/collections', id]);
+  }
+
+  editCollection(collection: Collection) {
+    // TODO: Aprire dialog per modificare collezione
+    alert('Funzionalità in sviluppo');
+  }
+
+  deleteCollection(collection: Collection) {
+    if (confirm(`Eliminare la collezione "${collection.name}"?`)) {
+      this.collectionService.deleteCollection(collection._id!).subscribe({
+        next: () => {
+          this.loadCollections();
+        },
+        error: (error) => {
+          console.error('Errore eliminazione:', error);
+        },
+      });
+    }
+  }
+
+  getTypeIcon(type: string): string {
+    const found = COLLECTION_TYPES.find((t) => t.value === type);
+    return found?.icon || 'category';
+  }
+
+  getTypeLabel(type: string): string {
+    const found = COLLECTION_TYPES.find((t) => t.value === type);
+    return found?.label || type;
+  }
+}

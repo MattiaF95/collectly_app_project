@@ -1,0 +1,23 @@
+<div class="image-upload-container">
+    <label class="upload-label">{{ label }}</label>
+
+    <div class="images-grid">
+        <div *ngFor="let image of images; let i = index" class="image-preview">
+            <img [src]="image" alt="Preview" />
+            <button mat-icon-button class="delete-btn" (click)="removeImage(i)" type="button">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <label class="add-image-btn" *ngIf="images.length < maxImages">
+            <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" #fileInput hidden />
+            <mat-icon>add_photo_alternate</mat-icon>
+            <span>Aggiungi foto</span>
+        </label>
+    </div>
+
+    <div class="upload-hint" *ngIf="hint">{{ hint }}</div>
+    <div class="upload-progress" *ngIf="uploading">
+        Caricamento in corso...
+    </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="detail-container" *ngIf="collection">
+    <div class="header" [style.background-color]="collection.color">
+        <button mat-icon-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-content">
+            <h1>{{ collection.name }}</h1>
+            <p *ngIf="collection.subtitle">{{ collection.subtitle }}</p>
+        </div>
+        <button mat-icon-button>
+            <mat-icon>more_vert</mat-icon>
+        </button>
+    </div>
+
+    <div class="content">
+        <div class="stats-bar">
+            <mat-card class="stat">
+                <mat-icon>inventory_2</mat-icon>
+                <div>
+                    <div class="value">{{ collection.itemCount || 0 }}</div>
+                    <div class="label">Oggetti</div>
+                </div>
+            </mat-card>
+
+            <mat-card class="stat">
+                <mat-icon>euro</mat-icon>
+                <div>
+                    <div class="value">
+                        €{{ (collection.totalValue || 0).toFixed(2) }}
+                    </div>
+                    <div class="label">Valore</div>
+                </div>
+            </mat-card>
+
+            <mat-card class="stat">
+                <mat-icon>shopping_cart</mat-icon>
+                <div>
+                    <div class="value">
+                        €{{ (collection.totalCost || 0).toFixed(2) }}
+                    </div>
+                    <div class="label">Spesa</div>
+                </div>
+            </mat-card>
+        </div>
+
+        <div class="actions">
+            <button mat-raised-button color="primary" (click)="openAddCollectibleDialog()">
+                <mat-icon>add</mat-icon>
+                Aggiungi Oggetto
+            </button>
+            <button mat-raised-button>
+                <mat-icon>qr_code_scanner</mat-icon>
+                Scansiona Barcode
+            </button>
+        </div>
+
+
+        <div class="items-section">
+            <h2>Oggetti nella Collezione</h2>
+            <div class="empty-items">
+                <mat-icon>inventory</mat-icon>
+                <p>Nessun oggetto in questa collezione</p>
+                <button mat-raised-button color="primary">
+                    Aggiungi il primo oggetto
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

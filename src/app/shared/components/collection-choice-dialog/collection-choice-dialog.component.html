@@ -1,0 +1,43 @@
+<div class="dialog-container">
+    <!-- SCHERMATA 1: Selezione Tipo -->
+    <div *ngIf="!creating && !confirmed" class="selection-screen">
+        <h2 mat-dialog-title>
+            <mat-icon>add_circle</mat-icon>
+            Nuova Collezione
+        </h2>
+
+        <mat-dialog-content>
+            <p class="subtitle">Scegli il tipo di collezione da creare</p>
+
+            <div class="collection-types">
+                <div *ngFor="let type of collectionTypes" class="type-card" (click)="selectType(type.value)"
+                    [class.selected]="selectedType === type.value">
+                    <mat-icon>{{ type.icon }}</mat-icon>
+                    <span>{{ type.label }}</span>
+                </div>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="dialog-actions">
+            <button mat-button (click)="close()">Annulla</button>
+            <button mat-raised-button color="primary" [disabled]="!selectedType || creating"
+                (click)="createCollection()">
+                Crea
+            </button>
+        </mat-dialog-actions>
+    </div>
+
+    <!-- SCHERMATA 2: Loading -->
+    <div *ngIf="creating && !confirmed" class="loading-screen">
+        <mat-spinner diameter="60"></mat-spinner>
+        <p>Creazione in corso...</p>
+    </div>
+
+    <!-- SCHERMATA 3: Conferma (Flag Giallo) -->
+    <div *ngIf="confirmed" class="confirmation-screen">
+        <div class="success-icon">
+            <mat-icon>check_circle</mat-icon>
+        </div>
+        <h3>Collezione Creata!</h3>
+    </div>
+</div>

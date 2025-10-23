@@ -1,0 +1,91 @@
+<div class="home-container">
+    <div class="welcome-section">
+        <h1>
+            <mat-icon>collections_bookmark</mat-icon>
+            Benvenuto in Collectly
+        </h1>
+        <p>Gestisci le tue collezioni in modo semplice e organizzato</p>
+    </div>
+
+    <div class="stats-section">
+        <mat-card class="stat-card">
+            <mat-icon>collections</mat-icon>
+            <div class="stat-value">{{ totalCollections }}</div>
+            <div class="stat-label">Collezioni</div>
+        </mat-card>
+
+        <mat-card class="stat-card">
+            <mat-icon>inventory_2</mat-icon>
+            <div class="stat-value">{{ totalItems }}</div>
+            <div class="stat-label">Oggetti</div>
+        </mat-card>
+
+        <mat-card class="stat-card">
+            <mat-icon>favorite</mat-icon>
+            <div class="stat-value">{{ totalFavorites }}</div>
+            <div class="stat-label">Preferiti</div>
+        </mat-card>
+
+        <mat-card class="stat-card">
+            <mat-icon>euro</mat-icon>
+            <div class="stat-value">€{{ totalValue.toFixed(0) }}</div>
+            <div class="stat-label">Valore Totale</div>
+        </mat-card>
+    </div>
+
+    <div class="actions-section">
+        <h2>Azioni Rapide</h2>
+        <div class="action-cards">
+            <mat-card class="action-card" (click)="navigateTo('/collections')">
+                <mat-icon>add_circle</mat-icon>
+                <h3>Nuova Collezione</h3>
+                <p>Crea una nuova collezione per i tuoi oggetti</p>
+            </mat-card>
+
+            <mat-card class="action-card" (click)="navigateTo('/collections')">
+                <mat-icon>list</mat-icon>
+                <h3>Vedi Collezioni</h3>
+                <p>Visualizza e gestisci le tue collezioni esistenti</p>
+            </mat-card>
+
+            <mat-card class="action-card" (click)="navigateTo('/statistics')">
+                <mat-icon>bar_chart</mat-icon>
+                <h3>Statistiche</h3>
+                <p>Analizza le tue collezioni con grafici dettagliati</p>
+            </mat-card>
+
+            <mat-card class="action-card" (click)="navigateTo('/favorites')">
+                <mat-icon>favorite</mat-icon>
+                <h3>Preferiti</h3>
+                <p>Accedi rapidamente ai tuoi oggetti preferiti</p>
+            </mat-card>
+        </div>
+    </div>
+
+    <div class="recent-section" *ngIf="recentCollections.length > 0">
+        <h2>Collezioni Recenti</h2>
+        <div class="recent-grid">
+            <mat-card *ngFor="let collection of recentCollections" class="collection-card"
+                (click)="navigateTo('/collections/' + collection._id)">
+                <mat-card-header [style.background-color]="collection.color">
+                    <mat-card-title>{{ collection.name }}</mat-card-title>
+                    <mat-card-subtitle *ngIf="collection.subtitle">
+                        {{ collection.subtitle }}
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="collection-stats">
+                        <span>
+                            <mat-icon>inventory_2</mat-icon>
+                            {{ collection.itemCount || 0 }} oggetti
+                        </span>
+                        <span *ngIf="collection.totalValue">
+                            <mat-icon>euro</mat-icon>
+                            €{{ collection.totalValue.toFixed(2) }}
+                        </span>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

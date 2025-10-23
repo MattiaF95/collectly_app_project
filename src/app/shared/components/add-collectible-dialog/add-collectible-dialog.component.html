@@ -1,0 +1,276 @@
+<div class="dialog-container">
+    <!-- SCHERMATA FORM -->
+    <div *ngIf="!creating && !confirmed" class="form-screen">
+        <h2 mat-dialog-title>
+            <mat-icon>add</mat-icon>
+            Aggiungi a {{ collectionName }}
+        </h2>
+
+        <mat-dialog-content>
+            <!-- FORM FILM -->
+            <div *ngIf="collectionType === 'movies'" class="form-content">
+                <app-form-input label="Titolo" [(ngModel)]="formData.title" [required]="true">
+                </app-form-input>
+
+                <app-form-select label="Tipo" [(ngModel)]="formData.itemType" [options]="itemTypeOptions"
+                    [required]="true">
+                </app-form-select>
+
+                <div class="form-row">
+                    <app-form-input label="Anno" type="number" [(ngModel)]="formData.releaseYear">
+                    </app-form-input>
+
+                    <app-form-input label="Durata (min)" type="number" [(ngModel)]="formData.duration">
+                    </app-form-input>
+                </div>
+
+                <app-form-input label="Regista" [(ngModel)]="formData.director">
+                </app-form-input>
+
+                <app-form-select label="Formato" [(ngModel)]="formData.format" [options]="formatOptions"
+                    [multiple]="true">
+                </app-form-select>
+
+                <div class="barcode-field">
+                    <app-form-input label="Codice a Barre" [(ngModel)]="formData.barcode">
+                    </app-form-input>
+                    <button mat-icon-button type="button" class="scan-btn" (click)="openBarcodeScanner()">
+                        <mat-icon>qr_code_scanner</mat-icon>
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <app-form-input label="Prezzo Acquisto (€)" type="number" [(ngModel)]="formData.purchasePrice">
+                    </app-form-input>
+
+                    <app-form-input label="Valore Stimato (€)" type="number" [(ngModel)]="formData.estimatedValue">
+                    </app-form-input>
+                </div>
+
+                <app-form-image-upload label="Immagini" [(ngModel)]="formData.images" [maxImages]="5">
+                </app-form-image-upload>
+
+                <app-form-textarea label="Note Personali" [(ngModel)]="formData.personalNotes" [rows]="3">
+                </app-form-textarea>
+            </div>
+
+            <!-- FORM FUMETTI -->
+            <div *ngIf="collectionType === 'comics'" class="form-content">
+                <app-form-input label="Titolo" [(ngModel)]="formData.title" [required]="true">
+                </app-form-input>
+
+                <div class="form-row">
+                    <app-form-input label="Numero" type="number" [(ngModel)]="formData.issueNumber">
+                    </app-form-input>
+
+                    <app-form-input label="Serie" [(ngModel)]="formData.series">
+                    </app-form-input>
+                </div>
+
+                <app-form-input label="Editore" [(ngModel)]="formData.publisher">
+                </app-form-input>
+
+                <app-form-input label="Anno Pubblicazione" type="number" [(ngModel)]="formData.publicationYear">
+                </app-form-input>
+
+                <app-form-select label="Formato" [(ngModel)]="formData.format" [options]="comicFormatOptions">
+                </app-form-select>
+
+                <app-form-select label="Condizione" [(ngModel)]="formData.condition" [options]="conditionOptions">
+                </app-form-select>
+
+                <div class="barcode-field">
+                    <app-form-input label="Codice a Barre" [(ngModel)]="formData.barcode">
+                    </app-form-input>
+                    <button mat-icon-button type="button" class="scan-btn" (click)="openBarcodeScanner()">
+                        <mat-icon>qr_code_scanner</mat-icon>
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <app-form-input label="Prezzo Acquisto (€)" type="number" [(ngModel)]="formData.purchasePrice">
+                    </app-form-input>
+
+                    <app-form-input label="Valore Stimato (€)" type="number" [(ngModel)]="formData.estimatedValue">
+                    </app-form-input>
+                </div>
+
+                <app-form-image-upload label="Immagini" [(ngModel)]="formData.images" [maxImages]="5">
+                </app-form-image-upload>
+
+                <app-form-textarea label="Note Personali" [(ngModel)]="formData.personalNotes" [rows]="3">
+                </app-form-textarea>
+            </div>
+
+            <!-- FORM STATUE -->
+            <div *ngIf="collectionType === 'statues'" class="form-content">
+                <app-form-input label="Nome" [(ngModel)]="formData.name" [required]="true">
+                </app-form-input>
+
+                <div class="form-row">
+                    <app-form-input label="Personaggio" [(ngModel)]="formData.character">
+                    </app-form-input>
+
+                    <app-form-input label="Serie" [(ngModel)]="formData.series">
+                    </app-form-input>
+                </div>
+
+                <app-form-input label="Produttore" [(ngModel)]="formData.manufacturer">
+                </app-form-input>
+
+                <div class="form-row">
+                    <app-form-input label="Scala" placeholder="es. 1/6, 1/4" [(ngModel)]="formData.scale">
+                    </app-form-input>
+
+                    <app-form-input label="Altezza (cm)" type="number" [(ngModel)]="formData.height">
+                    </app-form-input>
+                </div>
+
+                <app-form-select label="Condizione" [(ngModel)]="formData.condition" [options]="conditionOptions">
+                </app-form-select>
+
+                <div class="form-row">
+                    <app-form-input label="Prezzo Acquisto (€)" type="number" [(ngModel)]="formData.purchasePrice">
+                    </app-form-input>
+
+                    <app-form-input label="Valore Stimato (€)" type="number" [(ngModel)]="formData.estimatedValue">
+                    </app-form-input>
+                </div>
+
+                <app-form-image-upload label="Immagini" [(ngModel)]="formData.images" [maxImages]="5">
+                </app-form-image-upload>
+
+                <app-form-textarea label="Note Personali" [(ngModel)]="formData.personalNotes" [rows]="3">
+                </app-form-textarea>
+            </div>
+
+            <!-- FORM FRANCOBOLLI -->
+            <div *ngIf="collectionType === 'stamps'" class="form-content">
+                <app-form-input label="Nome" [(ngModel)]="formData.name" [required]="true">
+                </app-form-input>
+
+                <div class="form-row">
+                    <app-form-input label="Paese" [(ngModel)]="formData.country">
+                    </app-form-input>
+
+                    <app-form-input label="Anno Emissione" type="number" [(ngModel)]="formData.issueYear">
+                    </app-form-input>
+                </div>
+
+                <app-form-input label="Valore Facciale" type="number" [(ngModel)]="formData.faceValue">
+                </app-form-input>
+
+                <app-form-select label="Condizione" [(ngModel)]="formData.condition" [options]="conditionOptions">
+                </app-form-select>
+
+                <div class="form-row">
+                    <app-form-input label="Prezzo Acquisto (€)" type="number" [(ngModel)]="formData.purchasePrice">
+                    </app-form-input>
+
+                    <app-form-input label="Valore Stimato (€)" type="number" [(ngModel)]="formData.estimatedValue">
+                    </app-form-input>
+                </div>
+
+                <app-form-image-upload label="Immagini" [(ngModel)]="formData.images" [maxImages]="5">
+                </app-form-image-upload>
+
+                <app-form-textarea label="Note Personali" [(ngModel)]="formData.personalNotes" [rows]="3">
+                </app-form-textarea>
+            </div>
+
+            <!-- FORM LIBRI -->
+            <div *ngIf="collectionType === 'books'" class="form-content">
+                <app-form-input label="Titolo" [(ngModel)]="formData.title" [required]="true">
+                </app-form-input>
+
+                <app-form-input label="Autore" [(ngModel)]="formData.author">
+                </app-form-input>
+
+                <app-form-input label="Editore" [(ngModel)]="formData.publisher">
+                </app-form-input>
+
+                <div class="form-row">
+                    <app-form-input label="Anno Pubblicazione" type="number" [(ngModel)]="formData.publicationYear">
+                    </app-form-input>
+
+                    <app-form-input label="ISBN" [(ngModel)]="formData.isbn">
+                    </app-form-input>
+                </div>
+
+                <app-form-select label="Condizione" [(ngModel)]="formData.condition" [options]="conditionOptions">
+                </app-form-select>
+
+                <div class="form-row">
+                    <app-form-input label="Prezzo Acquisto (€)" type="number" [(ngModel)]="formData.purchasePrice">
+                    </app-form-input>
+
+                    <app-form-input label="Valore Stimato (€)" type="number" [(ngModel)]="formData.estimatedValue">
+                    </app-form-input>
+                </div>
+
+                <app-form-image-upload label="Immagini" [(ngModel)]="formData.images" [maxImages]="5">
+                </app-form-image-upload>
+
+                <app-form-textarea label="Note Personali" [(ngModel)]="formData.personalNotes" [rows]="3">
+                </app-form-textarea>
+            </div>
+
+            <!-- FORM PERIODICI -->
+            <div *ngIf="collectionType === 'magazines'" class="form-content">
+                <app-form-input label="Titolo" [(ngModel)]="formData.title" [required]="true">
+                </app-form-input>
+
+                <div class="form-row">
+                    <app-form-input label="Numero" type="number" [(ngModel)]="formData.issueNumber">
+                    </app-form-input>
+
+                    <app-form-input label="Serie" [(ngModel)]="formData.series">
+                    </app-form-input>
+                </div>
+
+                <app-form-input label="Editore" [(ngModel)]="formData.publisher">
+                </app-form-input>
+
+                <app-form-select label="Condizione" [(ngModel)]="formData.condition" [options]="conditionOptions">
+                </app-form-select>
+
+                <div class="form-row">
+                    <app-form-input label="Prezzo Acquisto (€)" type="number" [(ngModel)]="formData.purchasePrice">
+                    </app-form-input>
+
+                    <app-form-input label="Valore Stimato (€)" type="number" [(ngModel)]="formData.estimatedValue">
+                    </app-form-input>
+                </div>
+
+                <app-form-image-upload label="Immagini" [(ngModel)]="formData.images" [maxImages]="5">
+                </app-form-image-upload>
+
+                <app-form-textarea label="Note Personali" [(ngModel)]="formData.personalNotes" [rows]="3">
+                </app-form-textarea>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="dialog-actions">
+            <button mat-button (click)="close()">Annulla</button>
+            <button mat-raised-button color="primary" [disabled]="!isFormValid() || creating"
+                (click)="addCollectible()">
+                <mat-icon>add</mat-icon>
+                Aggiungi
+            </button>
+        </mat-dialog-actions>
+    </div>
+
+    <!-- SCHERMATA LOADING -->
+    <div *ngIf="creating && !confirmed" class="loading-screen">
+        <mat-spinner diameter="60"></mat-spinner>
+        <p>Aggiunta in corso...</p>
+    </div>
+
+    <!-- SCHERMATA CONFERMA (Flag Verde) -->
+    <div *ngIf="confirmed" class="confirmation-screen">
+        <div class="success-icon">
+            <mat-icon>check_circle</mat-icon>
+        </div>
+        <h3>Oggetto Aggiunto!</h3>
+    </div>
+</div>

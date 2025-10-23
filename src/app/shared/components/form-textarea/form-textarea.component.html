@@ -1,0 +1,7 @@
+<mat-form-field appearance="outline" class="w-full">
+    <mat-label>{{ label }}</mat-label>
+    <textarea matInput [placeholder]="placeholder" [(ngModel)]="value" (ngModelChange)="onChange($event)"
+        (blur)="onTouched()" [disabled]="disabled" [required]="required" [rows]="rows"></textarea>
+    <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+    <mat-error *ngIf="error">{{ error }}</mat-error>
+</mat-form-field>
