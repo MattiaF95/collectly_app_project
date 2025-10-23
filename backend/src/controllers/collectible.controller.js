@@ -1,42 +1,29 @@
-import Collectible from '../models/Collectible.js';
-import StatueCollectible from '../models/StatueCollectible.js';
-import StampCollectible from '../models/StampCollectible.js';
-import ComicCollectible from '../models/ComicCollectible.js';
-import BookCollectible from '../models/BookCollectible.js';
-import MagazineCollectible from '../models/MagazineCollectible.js';
-import Collection from '../models/Collection.js';
+import Collectible from '../models/collectible.model.js';
+import Collection from '../models/collection.model.js';
 
-// Mappa dei modelli per tipo
-const collectibleModels = {
-    movies: Collectible,
-    statues: StatueCollectible,
-    stamps: StampCollectible,
-    comics: ComicCollectible,
-    books: BookCollectible,
-    magazines: MagazineCollectible
-};
-
-const getModelByType = (type) => {
-    return collectibleModels[type] || Collectible;
-};
-
+// @desc    Get collectibles per collezione
+// @route   GET /api/collectibles/collection/:collectionId
+// @access  Private
 export const getCollectibles = async (req, res, next) => {
     try {
         const { collectionId } = req.params;
 
+        // Verifica che la collezione appartenga all'utente
         const collection = await Collection.findOne({
             _id: collectionId,
-            userId: req.userId
+            userId: req.userId,
+            deletedAt: null,
         });
 
         if (!collection) {
             return res.status(404).json({ message: 'Collezione non trovata' });
         }
 
-        const Model = getModelByType(collection.type);
-        const collectibles = await Model.find({
+        // Recupera collectibles
+        const collectibles = await Collectible.find({
             collectionId,
-            userId: req.userId
+            userId: req.userId,
+            deletedAt: null,
         }).sort({ createdAt: -1 });
 
         res.json(collectibles);
@@ -45,28 +32,19 @@ export const getCollectibles = async (req, res, next) => {
     }
 };
 
+// @desc    Get singolo collectible
+// @route   GET /api/collectibles/:id
+// @access  Private
 export const getCollectibleById = async (req, res, next) => {
     try {
-        const { collectionId, id } = req.params;
-
-        const collection = await Collection.findOne({
-            _id: collectionId,
-            userId: req.userId
-        });
-
-        if (!collection) {
-            return res.status(404).json({ message: 'Collezione non trovata' });
-        }
-
-        const Model = getModelByType(collection.type);
-        const collectible = await Model.findOne({
-            _id: id,
-            collectionId,
-            userId: req.userId
+        const collectible = await Collectible.findOne({
+            _id: req.params.id,
+            userId: req.userId,
+            deletedAt: null,
         });
 
         if (!collectible) {
-            return res.status(404).json({ message: 'Collectible non trovato' });
+            return res.status(404).json({ message: 'Oggetto non trovato' });
         }
 
         res.json(collectible);
@@ -75,36 +53,34 @@ export const getCollectibleById = async (req, res, next) => {
     }
 };
 
+// @desc    Crea nuovo collectible
+// @route   POST /api/collectibles/collection/:collectionId
+// @access  Private
 export const createCollectible = async (req, res, next) => {
     try {
         const { collectionId } = req.params;
 
+        // Verifica che la collezione appartenga all'utente
         const collection = await Collection.findOne({
             _id: collectionId,
-            userId: req.userId
+            userId: req.userId,
+            deletedAt: null,
         });
 
         if (!collection) {
             return res.status(404).json({ message: 'Collezione non trovata' });
         }
 
-        const Model = getModelByType(collection.type);
-        const collectible = await Model.create({
+        // Crea collectible
+        const collectible = await Collectible.create({
             ...req.body,
             collectionId,
             userId: req.userId,
-            type: collection.type
+            type: collection.type,
         });
 
         // Aggiorna contatori collezione
-        collection.itemCount = (collection.itemCount || 0) + 1;
-        if (req.body.purchasePrice) {
-            collection.totalCost = (collection.totalCost || 0) + req.body.purchasePrice;
-        }
-        if (req.body.estimatedValue) {
-            collection.totalValue = (collection.totalValue || 0) + req.body.estimatedValue;
-        }
-        await collection.save();
+        await updateCollectionStats(collectionId);
 
         res.status(201).json(collectible);
     } catch (error) {
@@ -112,42 +88,27 @@ export const createCollectible = async (req, res, next) => {
     }
 };
 
+// @desc    Aggiorna collectible
+// @route   PUT /api/collectibles/:id
+// @access  Private
 export const updateCollectible = async (req, res, next) => {
     try {
-        const { collectionId, id } = req.params;
-
-        const collection = await Collection.findOne({
-            _id: collectionId,
-            userId: req.userId
-        });
-
-        if (!collection) {
-            return res.status(404).json({ message: 'Collezione non trovata' });
-        }
-
-        const Model = getModelByType(collection.type);
-        const oldCollectible = await Model.findOne({
-            _id: id,
-            collectionId,
-            userId: req.userId
-        });
-
-        if (!oldCollectible) {
-            return res.status(404).json({ message: 'Collectible non trovato' });
-        }
-
-        // Aggiorna collectible
-        const collectible = await Model.findByIdAndUpdate(
-            id,
+        const collectible = await Collectible.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                userId: req.userId,
+                deletedAt: null,
+            },
             req.body,
             { new: true, runValidators: true }
         );
 
-        // Ricalcola totali collezione
-        const allCollectibles = await Model.find({ collectionId, userId: req.userId });
-        collection.totalCost = allCollectibles.reduce((sum, c) => sum + (c.purchasePrice || 0), 0);
-        collection.totalValue = allCollectibles.reduce((sum, c) => sum + (c.estimatedValue || 0), 0);
-        await collection.save();
+        if (!collectible) {
+            return res.status(404).json({ message: 'Oggetto non trovato' });
+        }
+
+        // Aggiorna contatori collezione
+        await updateCollectionStats(collectible.collectionId);
 
         res.json(collectible);
     } catch (error) {
@@ -155,61 +116,68 @@ export const updateCollectible = async (req, res, next) => {
     }
 };
 
+// @desc    Elimina collectible (soft delete)
+// @route   DELETE /api/collectibles/:id
+// @access  Private
 export const deleteCollectible = async (req, res, next) => {
     try {
-        const { collectionId, id } = req.params;
-
-        const collection = await Collection.findOne({
-            _id: collectionId,
-            userId: req.userId
-        });
-
-        if (!collection) {
-            return res.status(404).json({ message: 'Collezione non trovata' });
-        }
-
-        const Model = getModelByType(collection.type);
-        const collectible = await Model.findOneAndDelete({
-            _id: id,
-            collectionId,
-            userId: req.userId
+        const collectible = await Collectible.findOne({
+            _id: req.params.id,
+            userId: req.userId,
+            deletedAt: null,
         });
 
         if (!collectible) {
-            return res.status(404).json({ message: 'Collectible non trovato' });
+            return res.status(404).json({ message: 'Oggetto non trovato' });
         }
 
-        // Aggiorna contatori
-        collection.itemCount = Math.max(0, (collection.itemCount || 1) - 1);
-        if (collectible.purchasePrice) {
-            collection.totalCost = Math.max(0, (collection.totalCost || 0) - collectible.purchasePrice);
-        }
-        if (collectible.estimatedValue) {
-            collection.totalValue = Math.max(0, (collection.totalValue || 0) - collectible.estimatedValue);
-        }
-        await collection.save();
+        // Soft delete
+        collectible.deletedAt = new Date();
+        await collectible.save();
 
-        res.json({ message: 'Collectible eliminato' });
+        // Aggiorna contatori collezione
+        await updateCollectionStats(collectible.collectionId);
+
+        res.json({ message: 'Oggetto eliminato' });
     } catch (error) {
         next(error);
     }
 };
 
+// @desc    Toggle favorito
+// @route   PATCH /api/collectibles/:id/favorite
+// @access  Private
+export const toggleFavorite = async (req, res, next) => {
+    try {
+        const collectible = await Collectible.findOne({
+            _id: req.params.id,
+            userId: req.userId,
+            deletedAt: null,
+        });
+
+        if (!collectible) {
+            return res.status(404).json({ message: 'Oggetto non trovato' });
+        }
+
+        collectible.isFavorite = !collectible.isFavorite;
+        await collectible.save();
+
+        res.json(collectible);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get tutti i favoriti dell'utente
+// @route   GET /api/collectibles/favorites
+// @access  Private
 export const getFavorites = async (req, res, next) => {
     try {
-        // Ottieni tutti i tipi di collezioni dell'utente
-        const collections = await Collection.find({ userId: req.userId });
-        const favorites = [];
-
-        for (const collection of collections) {
-            const Model = getModelByType(collection.type);
-            const items = await Model.find({
-                userId: req.userId,
-                collectionId: collection._id,
-                isFavorite: true
-            });
-            favorites.push(...items);
-        }
+        const favorites = await Collectible.find({
+            userId: req.userId,
+            isFavorite: true,
+            deletedAt: null,
+        }).sort({ createdAt: -1 });
 
         res.json(favorites);
     } catch (error) {
@@ -217,30 +185,48 @@ export const getFavorites = async (req, res, next) => {
     }
 };
 
+// @desc    Cerca collectibles
+// @route   GET /api/collectibles/search?q=query
+// @access  Private
 export const searchCollectibles = async (req, res, next) => {
     try {
-        const { query } = req.query;
+        const { q } = req.query;
 
-        if (!query || query.trim().length < 2) {
+        if (!q || q.trim().length < 2) {
             return res.json([]);
         }
 
-        const collections = await Collection.find({ userId: req.userId });
-        const results = [];
-
-        for (const collection of collections) {
-            const Model = getModelByType(collection.type);
-            const items = await Model.find({
-                userId: req.userId,
-                collectionId: collection._id,
-                $text: { $search: query }
-            }).limit(20);
-
-            results.push(...items);
-        }
+        const results = await Collectible.find({
+            userId: req.userId,
+            deletedAt: null,
+            $text: { $search: q },
+        }).limit(50);
 
         res.json(results);
     } catch (error) {
         next(error);
     }
 };
+
+// ========================================
+// HELPER FUNCTIONS
+// ========================================
+
+async function updateCollectionStats(collectionId) {
+    try {
+        const collectibles = await Collectible.find({
+            collectionId,
+            deletedAt: null,
+        });
+
+        const stats = {
+            itemCount: collectibles.length,
+            totalCost: collectibles.reduce((sum, item) => sum + (item.purchasePrice || 0), 0),
+            totalValue: collectibles.reduce((sum, item) => sum + (item.estimatedValue || 0), 0),
+        };
+
+        await Collection.findByIdAndUpdate(collectionId, stats);
+    } catch (error) {
+        console.error('Errore update collection stats:', error);
+    }
+}

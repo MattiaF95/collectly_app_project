@@ -33,7 +33,7 @@ export class BarcodeService {
         formats: [
           BarcodeFormat.Ean13,
           BarcodeFormat.Ean8,
-          BarcodeFormat.Upc,
+          BarcodeFormat.UpcA,
           BarcodeFormat.Code39,
           BarcodeFormat.Code128,
           BarcodeFormat.QrCode,
