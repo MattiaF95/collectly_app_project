@@ -48,22 +48,109 @@
                 <mat-icon>add</mat-icon>
                 Aggiungi Oggetto
             </button>
-            <button mat-raised-button>
+            <button mat-raised-button (click)="openBarcodeScanner()">
                 <mat-icon>qr_code_scanner</mat-icon>
                 Scansiona Barcode
             </button>
         </div>
 
-
         <div class="items-section">
             <h2>Oggetti nella Collezione</h2>
-            <div class="empty-items">
+
+            <!-- Loading spinner -->
+            <div class="loading-container" *ngIf="loadingCollectibles">
+                <mat-spinner diameter="50"></mat-spinner>
+                <p>Caricamento oggetti...</p>
+            </div>
+
+            <!-- Empty state -->
+            <div class="empty-items" *ngIf="!loadingCollectibles && collectibles.length === 0">
                 <mat-icon>inventory</mat-icon>
                 <p>Nessun oggetto in questa collezione</p>
-                <button mat-raised-button color="primary">
+                <button mat-raised-button color="primary" (click)="openAddCollectibleDialog()">
                     Aggiungi il primo oggetto
                 </button>
             </div>
+
+            <!-- Lista collectibles -->
+            <div class="collectibles-grid" *ngIf="!loadingCollectibles && collectibles.length > 0">
+                <mat-card *ngFor="let item of collectibles" class="collectible-card">
+                    <!-- Immagine -->
+                    <div class="card-image">
+                        <img *ngIf="item.images && item.images.length > 0" [src]="item.images[0]"
+                            [alt]="getCollectibleTitle(item)" />
+                        <div *ngIf="!item.images || item.images.length === 0" class="no-image">
+                            <mat-icon>image</mat-icon>
+                        </div>
+
+                        <!-- Pulsante favorito -->
+                        <button mat-icon-button class="favorite-btn" [class.is-favorite]="item.isFavorite"
+                            (click)="toggleFavorite(item)">
+                            <mat-icon>{{ item.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+                        </button>
+                    </div>
+
+                    <!-- Contenuto -->
+                    <mat-card-content>
+                        <h3>{{ getCollectibleTitle(item) }}</h3>
+
+                        <!-- Campi dinamici -->
+                        <div class="item-details">
+                            <p *ngIf="hasField(item, 'director')">
+                                <strong>Regista:</strong> {{ item.director }}
+                            </p>
+                            <p *ngIf="hasField(item, 'releaseYear')">
+                                <strong>Anno:</strong> {{ item.releaseYear }}
+                            </p>
+                            <p *ngIf="hasField(item, 'author')">
+                                <strong>Autore:</strong> {{ item.author }}
+                            </p>
+                            <p *ngIf="hasField(item, 'publisher')">
+                                <strong>Editore:</strong> {{ item.publisher }}
+                            </p>
+                            <p *ngIf="hasField(item, 'series')">
+                                <strong>Serie:</strong> {{ item.series }}
+                            </p>
+                            <p *ngIf="hasField(item, 'issueNumber')">
+                                <strong>Numero:</strong> {{ item.issueNumber }}
+                            </p>
+                            <p *ngIf="hasField(item, 'manufacturer')">
+                                <strong>Produttore:</strong> {{ item.manufacturer }}
+                            </p>
+                            <p *ngIf="hasField(item, 'character')">
+                                <strong>Personaggio:</strong> {{ item.character }}
+                            </p>
+                            <p *ngIf="hasField(item, 'condition')">
+                                <strong>Condizione:</strong> {{ item.condition }}
+                            </p>
+                            <p *ngIf="hasField(item, 'purchasePrice')" class="price">
+                                <strong>Prezzo:</strong> €{{ item.purchasePrice?.toFixed(2) }}
+                            </p>
+                            <p *ngIf="hasField(item, 'estimatedValue')" class="value">
+                                <strong>Valore:</strong> €{{ item.estimatedValue?.toFixed(2) }}
+                            </p>
+                        </div>
+                    </mat-card-content>
+
+                    <!-- Azioni -->
+                    <mat-card-actions>
+                        <button mat-button color="primary">
+                            <mat-icon>edit</mat-icon>
+                            Modifica
+                        </button>
+                        <button mat-button color="warn" (click)="deleteCollectible(item)">
+                            <mat-icon>delete</mat-icon>
+                            Elimina
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Loading collezione -->
+<div class="loading-container" *ngIf="loading && !collection">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Caricamento collezione...</p>
 </div>

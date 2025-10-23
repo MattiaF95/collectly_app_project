@@ -25,6 +25,7 @@ export interface AddCollectibleDialogData {
   collectionId: string;
   collectionType: CollectionType;
   collectionName: string;
+  barcode?: string;
 }
 
 @Component({
@@ -94,6 +95,11 @@ export class AddCollectibleDialogComponent {
     this.collectionType = data.collectionType;
     this.collectionName = data.collectionName;
     this.initFormData();
+
+    // ✅ Pre-compila barcode se fornito
+    if (data.barcode) {
+      this.formData.barcode = data.barcode;
+    }
   }
 
   initFormData() {

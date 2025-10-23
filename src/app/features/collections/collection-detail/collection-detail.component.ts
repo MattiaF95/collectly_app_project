@@ -14,6 +14,7 @@ import {
 } from '../../../core/services/collectible.service';
 import { Collection } from '../../../core/models/collection.model';
 import { AddCollectibleDialogComponent } from '../../../shared/components/add-collectible-dialog/add-collectible-dialog.component';
+import { BarcodeScannerComponent } from '../../../shared/components/barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-collection-detail',
@@ -99,6 +100,41 @@ export class CollectionDetailComponent implements OnInit {
         // Ricarica collezione e collectibles
         this.loadCollection(this.collection!._id!);
         this.loadCollectibles(this.collection!._id!);
+      }
+    });
+  }
+
+  // Apre barcode scanner standalone
+  openBarcodeScanner() {
+    const dialogRef = this.dialog.open(BarcodeScannerComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((barcode) => {
+      if (barcode) {
+        // Qui puoi fare qualcosa con il barcode
+        // Per esempio, cercare un collectible o aprire il form pre-compilato
+        console.log('Barcode scansionato:', barcode);
+
+        // Opzione: Apri dialog con barcode pre-compilato
+        const dialogRef = this.dialog.open(AddCollectibleDialogComponent, {
+          width: '700px',
+          maxHeight: '90vh',
+          disableClose: false,
+          data: {
+            collectionId: this.collection!._id,
+            collectionType: this.collection!.type,
+            collectionName: this.collection!.name,
+            barcode: barcode, // ← Pre-compila barcode
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === true) {
+            this.loadCollection(this.collection!._id!);
+            this.loadCollectibles(this.collection!._id!);
+          }
+        });
       }
     });
   }
