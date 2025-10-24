@@ -1,47 +1,61 @@
-<mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer mode="side" opened class="sidenav">
-        <mat-toolbar color="primary">
-            <span>Collectly</span>
-        </mat-toolbar>
-        <mat-nav-list>
-            <a mat-list-item routerLink="/home" routerLinkActive="active">
-                <mat-icon>home</mat-icon>
-                <span>Home</span>
-            </a>
-            <a mat-list-item routerLink="/collections" routerLinkActive="active">
-                <mat-icon>collections_bookmark</mat-icon>
-                <span>Collezioni</span>
-            </a>
-            <a mat-list-item routerLink="/favorites" routerLinkActive="active">
-                <mat-icon>favorite</mat-icon>
-                <span>Preferiti</span>
-            </a>
-            <a mat-list-item routerLink="/statistics" routerLinkActive="active">
-                <mat-icon>bar_chart</mat-icon>
-                <span>Statistiche</span>
-            </a>
-            <a mat-list-item routerLink="/settings" routerLinkActive="active">
-                <mat-icon>settings</mat-icon>
-                <span>Impostazioni</span>
-            </a>
-            <mat-divider></mat-divider>
-            <a mat-list-item (click)="logout()">
-                <mat-icon>exit_to_app</mat-icon>
-                <span>Logout</span>
-            </a>
-        </mat-nav-list>
-    </mat-sidenav>
+<div class="mobile-container">
+    <!-- Header -->
+    <mat-toolbar color="primary" class="top-toolbar">
+        <button mat-icon-button *ngIf="showBackButton" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="toolbar-title">{{ pageTitle }}</span>
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="more-options">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+    </mat-toolbar>
 
-    <mat-sidenav-content>
-        <mat-toolbar color="primary" class="top-toolbar">
-            <button mat-icon-button (click)="drawer.toggle()">
-                <mat-icon>menu</mat-icon>
-            </button>
-            <span>{{ pageTitle }}</span>
-        </mat-toolbar>
+    <!-- Content Area -->
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
 
-        <div class="content">
-            <router-outlet></router-outlet>
-        </div>
-    </mat-sidenav-content>
-</mat-sidenav-container>
+    <!-- Bottom Navigation -->
+    <mat-toolbar class="bottom-nav">
+        <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="mobile-nav">
+            <a mat-tab-link routerLink="/home" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+                <div class="nav-item">
+                    <mat-icon>home</mat-icon>
+                    <span class="nav-label">Home</span>
+                </div>
+            </a>
+            <a mat-tab-link routerLink="/collections" routerLinkActive #rla2="routerLinkActive"
+                [active]="rla2.isActive">
+                <div class="nav-item">
+                    <mat-icon>collections_bookmark</mat-icon>
+                    <span class="nav-label">Collezioni</span>
+                </div>
+            </a>
+            <a mat-tab-link routerLink="/favorites" routerLinkActive #rla3="routerLinkActive" [active]="rla3.isActive">
+                <div class="nav-item">
+                    <mat-icon>favorite</mat-icon>
+                    <span class="nav-label">Preferiti</span>
+                </div>
+            </a>
+            <a mat-tab-link routerLink="/statistics" routerLinkActive #rla4="routerLinkActive" [active]="rla4.isActive">
+                <div class="nav-item">
+                    <mat-icon>bar_chart</mat-icon>
+                    <span class="nav-label">Stats</span>
+                </div>
+            </a>
+        </nav>
+        <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    </mat-toolbar>
+
+    <!-- More Options Menu -->
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/settings">
+            <mat-icon>settings</mat-icon>
+            <span>Impostazioni</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+        </button>
+    </mat-menu>
+</div>
