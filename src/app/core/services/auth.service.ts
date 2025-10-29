@@ -7,9 +7,9 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {

@@ -24,33 +24,9 @@ export interface SelectOption {
       multi: true,
     },
   ],
-  template: `
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>{{ label }}</mat-label>
-      <mat-select
-        [(ngModel)]="value"
-        (ngModelChange)="onChange($event)"
-        (blur)="onTouched()"
-        [disabled]="disabled"
-        [required]="required"
-        [multiple]="multiple"
-      >
-        <mat-option *ngFor="let option of options" [value]="option.value">
-          {{ option.label }}
-        </mat-option>
-      </mat-select>
-      <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
-      <mat-error *ngIf="error">{{ error }}</mat-error>
-    </mat-form-field>
-  `,
-  styles: [
-    `
-      :host {
-        display: block;
-        width: 100%;
-      }
-    `,
-  ],
+
+  templateUrl: './form-select.component.html',
+  styleUrl: './form-select.component.scss',
 })
 export class FormSelectComponent implements ControlValueAccessor {
   @Input() label: string = '';
@@ -61,6 +37,7 @@ export class FormSelectComponent implements ControlValueAccessor {
   @Input() required: boolean = false;
   @Input() disabled: boolean = false;
   @Input() multiple: boolean = false;
+  @Input() appearance: 'fill' | 'outline' = 'outline';
 
   value: any = this.multiple ? [] : null;
   onChange: any = () => {};

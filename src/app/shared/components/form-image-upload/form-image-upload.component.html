@@ -2,22 +2,30 @@
     <label class="upload-label">{{ label }}</label>
 
     <div class="images-grid">
+        <!-- Immagini caricate -->
         <div *ngFor="let image of images; let i = index" class="image-preview">
-            <img [src]="image" alt="Preview" />
-            <button mat-icon-button class="delete-btn" (click)="removeImage(i)" type="button">
+            <img [src]="image" [alt]="'Immagine ' + (i + 1)" />
+            <button mat-icon-button class="delete-btn" (click)="removeImage(i)" type="button"
+                aria-label="Rimuovi immagine">
                 <mat-icon>close</mat-icon>
             </button>
         </div>
 
+        <!-- Pulsante aggiungi -->
         <label class="add-image-btn" *ngIf="images.length < maxImages">
-            <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" #fileInput hidden />
+            <input type="file" accept="image/*" [multiple]="multiple" [attr.capture]="'environment'"
+                (change)="onFileSelected($event)" #fileInput hidden />
             <mat-icon>add_photo_alternate</mat-icon>
-            <span>Aggiungi foto</span>
+            <span>{{ images.length === 0 ? 'Aggiungi foto' : 'Aggiungi altra' }}</span>
         </label>
     </div>
 
+    <!-- Hint -->
     <div class="upload-hint" *ngIf="hint">{{ hint }}</div>
+
+    <!-- Loading -->
     <div class="upload-progress" *ngIf="uploading">
-        Caricamento in corso...
+        <mat-spinner diameter="24"></mat-spinner>
+        <span>Caricamento...</span>
     </div>
 </div>

@@ -1,134 +1,658 @@
+// ============================================
+// MOBILE-FIRST DIALOG STYLES
+// Ottimizzato per Capacitor (iOS/Android)
+// ============================================
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .dialog-container {
-  min-width: 550px;
-  max-width: 750px;
-}
-
-.form-screen {
-  h2 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
-
-    mat-icon {
-      color: #3498db;
-    }
-  }
-
-  mat-dialog-content {
-    padding: 2rem;
-    max-height: 65vh;
-    overflow-y: auto;
-
-    .form-content {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-
-      .barcode-field {
-        position: relative;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-
-        app-form-input {
-          flex: 1;
-        }
-
-        .scan-btn {
-          margin-top: 4px;
-          color: #3498db;
-        }
-      }
-    }
-  }
-
-  .dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e0e0e0;
-
-    button {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-  }
-}
-
-.loading-screen {
-  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
+  height: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
+}
 
-  p {
+// ============================================
+// HEADER
+// ============================================
+.dialog-header {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    padding-right: 40px; // Spazio per close button
+  }
+
+  .subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
     color: #666;
-    font-size: 1rem;
+  }
+
+  button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  // iOS Safe Area (notch)
+  @supports (padding: env(safe-area-inset-top)) {
+    padding-top: calc(16px + env(safe-area-inset-top));
   }
 }
 
-.confirmation-screen {
-  padding: 3rem 2rem;
-  text-align: center;
-  animation: fadeIn 0.3s ease;
+// ============================================
+// CONTENT (Scrollable)
+// ============================================
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  -webkit-overflow-scrolling: touch; // Smooth scroll iOS
+  overscroll-behavior: contain; // Prevent bounce
 
-  .success-icon {
-    margin-bottom: 1rem;
-    animation: checkBounce 0.6s ease;
+  // Hide scrollbar (cleaner look)
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
 
-    mat-icon {
-      font-size: 100px;
-      width: 100px;
-      height: 100px;
-      color: #4caf50; // Verde conferma
-      filter: drop-shadow(0 4px 8px rgba(76, 175, 80, 0.3));
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  @media (max-width: 600px) {
+    padding: 16px;
+
+    &::-webkit-scrollbar {
+      display: none;
     }
+  }
+}
+
+// ============================================
+// FORM LAYOUT
+// ============================================
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  // Stack vertically on mobile
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // Full width variant
+  &.full-width {
+    flex-direction: column;
+  }
+
+  // Half width (2 columns)
+  &.half-width {
+    > * {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+    }
+  }
+
+  // Third width (3 columns)
+  &.third-width {
+    > * {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.form-section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
   }
 
   h3 {
-    color: #2c3e50;
-    font-size: 1.5rem;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: #333;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+  }
+}
+
+// ============================================
+// INPUT FIELDS - Mobile Touch Optimized
+// ============================================
+::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+    font-size: 16px !important; // Prevents iOS zoom
+
+    .mat-mdc-text-field-wrapper {
+      padding: 0;
+    }
+
+    .mat-mdc-form-field-infix {
+      min-height: 48px; // iOS/Android touch target
+      padding: 8px 0;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      margin-top: 4px;
+    }
+
+    input,
+    textarea,
+    select {
+      font-size: 16px !important; // Prevents iOS zoom
+      padding: 12px;
+      border-radius: 4px;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    input[type="number"] {
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    textarea {
+      min-height: 80px;
+      max-height: 200px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+  }
+
+  // Chip inputs (multiselect)
+  .mat-mdc-chip-set {
+    .mat-mdc-chip {
+      font-size: 14px;
+      min-height: 36px;
+      border-radius: 16px;
+      padding: 8px 12px;
+    }
+
+    .mat-mdc-chip-remove {
+      min-width: 24px;
+      min-height: 24px;
+    }
+  }
+
+  // Select dropdown
+  .mat-mdc-select {
+    .mat-mdc-select-trigger {
+      min-height: 48px;
+    }
+
+    .mat-mdc-select-value {
+      font-size: 16px;
+    }
+  }
+
+  // Buttons
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-icon-button {
+    min-height: 44px; // iOS touch target (44px minimum)
+    font-size: 16px;
+
+    &:not(.mat-mdc-icon-button) {
+      padding: 0 20px;
+    }
+  }
+
+  // Checkbox
+  .mat-mdc-checkbox {
+    margin: 8px 0;
+
+    .mdc-checkbox {
+      width: 24px;
+      height: 24px;
+    }
+
+    .mdc-form-field {
+      font-size: 16px;
+    }
+  }
+
+  // Radio buttons
+  .mat-mdc-radio-button {
+    margin: 8px 0;
+
+    .mdc-radio {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// ============================================
+// AUDIO LANGUAGES (Complex Input)
+// ============================================
+.audio-languages-section {
+  margin: 16px 0;
+
+  .section-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 12px;
+  }
+}
+
+.audio-language-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  position: relative;
+
+  .audio-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 8px;
+    align-items: flex-end;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+
+      button {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .remove-btn {
+    flex-shrink: 0;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+}
+
+.add-audio-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+// ============================================
+// BARCODE INPUT
+// ============================================
+.barcode-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  app-form-input {
+    flex: 1;
+  }
+
+  .barcode-scan-btn {
+    flex-shrink: 0;
+    min-width: 48px;
+    height: 48px;
+
+    @media (max-width: 600px) {
+      width: 100%;
+      height: 44px;
+    }
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// ============================================
+// IMAGE UPLOAD
+// ============================================
+.image-upload-section {
+  margin: 16px 0;
+
+  app-form-image-upload {
+    display: block;
+    width: 100%;
+  }
+}
+
+// ============================================
+// CONDITIONAL FIELDS
+// ============================================
+.conditional-fields {
+  padding: 16px;
+  padding-left: 24px;
+  border-left: 3px solid #3f51b5;
+  margin-top: 12px;
+  background: #f5f7ff;
+  border-radius: 4px;
+
+  @media (max-width: 600px) {
+    padding-left: 16px;
+  }
+
+  .conditional-label {
+    font-size: 13px;
+    color: #3f51b5;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+  }
+}
+
+// ============================================
+// FOOTER (Actions)
+// ============================================
+.dialog-actions {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+  background: #fff;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+
+  // iOS Safe Area (home indicator)
+  @supports (padding: env(safe-area-inset-bottom)) {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column-reverse;
+    gap: 8px;
+    padding: 12px 16px;
+
+    button {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
+  button {
+    &[mat-button] {
+      color: #666;
+    }
+
+    &[mat-raised-button] {
+      &[color="primary"] {
+        background-color: #3f51b5;
+        color: white;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+// ============================================
+// LOADING STATE
+// ============================================
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  gap: 16px;
+  backdrop-filter: blur(2px);
+
+  mat-spinner {
     margin: 0;
-    animation: fadeInUp 0.4s ease 0.2s both;
+  }
+
+  p {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+.success-message {
+  text-align: center;
+  color: #4caf50;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #4caf50;
   }
 }
 
-@keyframes checkBounce {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+// ============================================
+// REQUIRED INDICATOR
+// ============================================
+.required-indicator {
+  color: #f44336;
+  margin-left: 4px;
+}
+
+// ============================================
+// FIELD LABELS
+// ============================================
+.field-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  display: block;
+
+  &.required::after {
+    content: " *";
+    color: #f44336;
   }
 }
 
-@keyframes fadeInUp {
+// ============================================
+// HELPER TEXT
+// ============================================
+.helper-text {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  display: block;
+  line-height: 1.4;
+}
+
+// ============================================
+// EMPTY STATE
+// ============================================
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: #999;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 12px 0 0;
+    font-size: 14px;
+  }
+}
+
+// ============================================
+// CAPACITOR SPECIFIC ADJUSTMENTS
+// ============================================
+@media (max-width: 600px) {
+  // Prevent text zoom on focus (iOS)
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  // Better spacing on small screens
+  .form-content {
+    gap: 12px;
+  }
+
+  .form-row {
+    gap: 12px;
+  }
+
+  // Compact headers
+  .dialog-header {
+    padding: 12px 16px;
+
+    h2 {
+      font-size: 16px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+    }
+  }
+}
+
+// ============================================
+// DARK MODE SUPPORT (Optional)
+// ============================================
+// @media (prefers-color-scheme: dark) {
+//   .dialog-container {
+//     background: #1e1e1e;
+//     color: #e0e0e0;
+//   }
+
+//   .dialog-header {
+//     background: #2d2d2d;
+//     border-bottom-color: #444;
+
+//     h2 {
+//       color: #e0e0e0;
+//     }
+
+//     .subtitle {
+//       color: #999;
+//     }
+//   }
+
+//   .form-section h3 {
+//     color: #e0e0e0;
+//     border-bottom-color: #444;
+//   }
+
+//   .audio-language-group {
+//     background: #2d2d2d;
+//     border-color: #444;
+//   }
+
+//   .conditional-fields {
+//     background: #2a2d3a;
+//     border-left-color: #5c6bc0;
+
+//     .conditional-label {
+//       color: #7986cb;
+//     }
+//   }
+
+//   .dialog-actions {
+//     background: #2d2d2d;
+//     border-top-color: #444;
+//   }
+// }
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+*:focus-visible {
+  outline: 2px solid #3f51b5;
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline: 2px solid #3f51b5;
+  outline-offset: 2px;
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+@keyframes slideIn {
   from {
     opacity: 0;
     transform: translateY(20px);

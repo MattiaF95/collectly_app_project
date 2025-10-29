@@ -7,13 +7,20 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-form-image-upload',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -30,14 +37,23 @@ export class FormImageUploadComponent implements ControlValueAccessor {
   @Input() label: string = 'Immagini';
   @Input() hint: string = '';
   @Input() maxImages: number = 10;
+  @Input() multiple: boolean = true; // ✅ Supporto upload singolo/multiplo
 
   images: string[] = [];
   uploading = false;
+
   onChange: any = () => {};
   onTouched: any = () => {};
 
-  writeValue(value: string[]): void {
-    this.images = value || [];
+  writeValue(value: string[] | string): void {
+    // ✅ Supporta sia array che singola immagine
+    if (Array.isArray(value)) {
+      this.images = value || [];
+    } else if (value) {
+      this.images = [value];
+    } else {
+      this.images = [];
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -69,7 +85,10 @@ export class FormImageUploadComponent implements ControlValueAccessor {
 
       const newImages = response.images.map((img: any) => img.original);
       this.images = [...this.images, ...newImages];
-      this.onChange(this.images);
+
+      // ✅ Emetti array o singola immagine
+      this.onChange(this.multiple ? this.images : this.images[0]);
+      this.onTouched();
     } catch (error) {
       console.error('Errore upload immagini:', error);
       alert('Errore durante il caricamento delle immagini');
@@ -81,6 +100,17 @@ export class FormImageUploadComponent implements ControlValueAccessor {
 
   removeImage(index: number) {
     this.images.splice(index, 1);
-    this.onChange(this.images);
+    this.onChange(this.multiple ? this.images : this.images[0] || null);
+    this.onTouched();
+  }
+
+  // ✅ Trigger manual camera (mobile)
+  openCamera() {
+    const fileInput = document.querySelector(
+      'input[type="file"]'
+    ) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
   }
 }

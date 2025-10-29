@@ -85,9 +85,13 @@ export class CollectionDetailComponent implements OnInit {
     if (!this.collection) return;
 
     const dialogRef = this.dialog.open(AddCollectibleDialogComponent, {
-      width: '700px',
-      maxHeight: '90vh',
+      // ✅ Mobile-first: usa maxWidth invece di width fissa
+      maxWidth: '95vw', // 95% viewport width su mobile
+      width: '600px', // Max 600px su desktop
+      maxHeight: '90vh', // 90% viewport height
+      panelClass: 'mobile-dialog', // Classe custom per stili
       disableClose: false,
+      autoFocus: false, // ✅ Evita zoom automatico su iOS
       data: {
         collectionId: this.collection._id,
         collectionType: this.collection.type,
@@ -97,7 +101,6 @@ export class CollectionDetailComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === true) {
-        // Ricarica collezione e collectibles
         this.loadCollection(this.collection!._id!);
         this.loadCollectibles(this.collection!._id!);
       }

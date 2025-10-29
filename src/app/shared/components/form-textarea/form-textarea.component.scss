@@ -2,3 +2,30 @@
   display: block;
   width: 100%;
 }
+
+::ng-deep .mat-mdc-form-field {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-form-field-infix {
+  min-height: auto !important;
+  padding: 8px 0 !important;
+}
+
+::ng-deep textarea {
+  font-size: 16px !important; // ✅ Previene zoom iOS
+  font-family: Roboto, sans-serif;
+  resize: vertical;
+  line-height: 1.5;
+  min-height: 80px;
+  padding: 12px;
+
+  @media (max-width: 600px) {
+    font-size: 16px !important;
+    min-height: 100px;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}

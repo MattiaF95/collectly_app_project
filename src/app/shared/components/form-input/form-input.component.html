@@ -1,0 +1,10 @@
+<mat-form-field appearance="outline" class="w-full">
+    <mat-label>{{ label }}</mat-label>
+    <input matInput [type]="type" [placeholder]="placeholder" [attr.inputmode]="inputmode" [(ngModel)]="value"
+        (ngModelChange)="onChange($event)" (blur)="onTouched()" [disabled]="disabled" [required]="required"
+        [readonly]="readonly" />
+    <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+    <mat-error *ngIf="error">{{ error }}</mat-error>
+    <ng-content></ng-content>
+    <!-- ✅ Per barcode scanner button -->
+</mat-form-field>

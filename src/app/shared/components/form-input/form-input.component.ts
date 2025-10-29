@@ -19,31 +19,9 @@ import { MatInputModule } from '@angular/material/input';
       multi: true,
     },
   ],
-  template: `
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>{{ label }}</mat-label>
-      <input
-        matInput
-        [type]="type"
-        [placeholder]="placeholder"
-        [(ngModel)]="value"
-        (ngModelChange)="onChange($event)"
-        (blur)="onTouched()"
-        [disabled]="disabled"
-        [required]="required"
-      />
-      <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
-      <mat-error *ngIf="error">{{ error }}</mat-error>
-    </mat-form-field>
-  `,
-  styles: [
-    `
-      :host {
-        display: block;
-        width: 100%;
-      }
-    `,
-  ],
+
+  templateUrl: './form-input.component.html',
+  styleUrl: './form-input.component.scss',
 })
 export class FormInputComponent implements ControlValueAccessor {
   @Input() label: string = '';
@@ -53,13 +31,25 @@ export class FormInputComponent implements ControlValueAccessor {
   @Input() error: string = '';
   @Input() required: boolean = false;
   @Input() disabled: boolean = false;
+  @Input() readonly: boolean = false; // ✅ Aggiunto
+
+  // ✅ NUOVO: Mobile keyboard optimization
+  @Input() inputmode:
+    | 'text'
+    | 'numeric'
+    | 'decimal'
+    | 'tel'
+    | 'email'
+    | 'url'
+    | 'search' = 'text';
 
   value: any = '';
+
   onChange: any = () => {};
   onTouched: any = () => {};
 
   writeValue(value: any): void {
-    this.value = value;
+    this.value = value || '';
   }
 
   registerOnChange(fn: any): void {

@@ -2,12 +2,11 @@ import { Component, inject, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabsModule, MatTabNav } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatTabNav } from '@angular/material/tabs';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -28,9 +27,9 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './main.layout.component.scss',
 })
 export class MainLayoutComponent {
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private location = inject(Location);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   @ViewChild('tabPanel') tabPanel!: MatTabNav;
 

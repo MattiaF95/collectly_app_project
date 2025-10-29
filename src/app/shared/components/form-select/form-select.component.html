@@ -1,0 +1,11 @@
+<mat-form-field [appearance]="appearance" class="full-width">
+    <mat-label>{{ label }}</mat-label>
+    <mat-select [(ngModel)]="value" (ngModelChange)="onChange($event)" (blur)="onTouched()" [disabled]="disabled"
+        [required]="required" [multiple]="multiple" [placeholder]="placeholder">
+        <mat-option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+        </mat-option>
+    </mat-select>
+    <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+    <mat-error *ngIf="error">{{ error }}</mat-error>
+</mat-form-field>

@@ -19,7 +19,6 @@ import { MatInputModule } from '@angular/material/input';
       multi: true,
     },
   ],
-
   templateUrl: './form-textarea.component.html',
   styleUrl: './form-textarea.component.scss',
 })
@@ -31,13 +30,14 @@ export class FormTextareaComponent implements ControlValueAccessor {
   @Input() required: boolean = false;
   @Input() disabled: boolean = false;
   @Input() rows: number = 3;
+  @Input() appearance: 'fill' | 'outline' = 'outline';
 
   value: any = '';
   onChange: any = () => {};
   onTouched: any = () => {};
 
   writeValue(value: any): void {
-    this.value = value;
+    this.value = value || '';
   }
 
   registerOnChange(fn: any): void {
