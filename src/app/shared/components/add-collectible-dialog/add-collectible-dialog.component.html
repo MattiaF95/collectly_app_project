@@ -65,18 +65,73 @@
                 <div class="form-section">
                     <h3>Formato e Audio</h3>
 
+                    <!-- Formato -->
                     <app-form-select label="Formato *" [(ngModel)]="formData.format" [options]="formatOptions"
                         [multiple]="true" [required]="true">
                     </app-form-select>
 
-                    <app-form-select label="Lingue Audio" [(ngModel)]="formData.audioLanguages"
-                        [options]="audioLanguageOptions" [multiple]="true">
-                    </app-form-select>
+                    <!-- ✅ NUOVA SEZIONE AUDIO LANGUAGES -->
+                    <div class="audio-languages-section">
+                        <h4 class="section-label">Lingue Audio</h4>
 
+                        <!-- Dropdown + Pulsante Aggiungi -->
+                        <div class="audio-selector">
+                            <app-form-select label="Seleziona Lingua" [(ngModel)]="selectedLanguage"
+                                [options]="audioLanguageOptions" [multiple]="false" placeholder="Scegli una lingua">
+                            </app-form-select>
+                            <button mat-raised-button color="primary" type="button" (click)="addAudioLanguage()"
+                                [disabled]="!selectedLanguage" class="add-audio-btn">
+                                <mat-icon>add</mat-icon>
+                                Aggiungi
+                            </button>
+                        </div>
+
+                        <!-- Lista Lingue Aggiunte -->
+                        <!-- Lista Lingue Aggiunte -->
+                        <div class="audio-languages-list"
+                            *ngIf="formData.audioLanguages && formData.audioLanguages.length > 0">
+                            <div *ngFor="let audio of formData.audioLanguages; let i = index"
+                                class="audio-language-item">
+
+                                <!-- Nome Lingua + Pulsante Rimuovi -->
+                                <div class="audio-lang-header">
+                                    <span class="audio-lang-name">{{ audio.lang }}</span>
+                                    <button mat-icon-button type="button" (click)="removeAudioLanguage(i)"
+                                        class="remove-btn">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </div>
+
+                                <!-- Codec e Format SULLA STESSA RIGA -->
+                                <div class="audio-controls">
+                                    <!-- Codec -->
+                                    <app-form-select label="Codec (opzionale)" [(ngModel)]="audio.codec"
+                                        [options]="audioCodecOptions" [multiple]="false" placeholder="Codec"
+                                        class="audio-codec">
+                                    </app-form-select>
+
+                                    <!-- Format (appare solo se codec è selezionato) -->
+                                    <app-form-select *ngIf="shouldShowFormat(audio)" label="Formato (opzionale)"
+                                        [(ngModel)]="audio.format" [options]="audioFormatOptions" [multiple]="false"
+                                        placeholder="Formato" class="audio-format">
+                                    </app-form-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State (senza icona, solo testo) -->
+                        <div class="audio-empty"
+                            *ngIf="!formData.audioLanguages || formData.audioLanguages.length === 0">
+                            <p>Nessuna lingua audio aggiunta</p>
+                        </div>
+                    </div>
+
+                    <!-- Sottotitoli -->
                     <app-form-select label="Sottotitoli" [(ngModel)]="formData.subtitles" [options]="subtitleOptions"
                         [multiple]="true">
                     </app-form-select>
                 </div>
+
 
                 <!-- SEZIONE: BARCODE -->
                 <div class="form-section">

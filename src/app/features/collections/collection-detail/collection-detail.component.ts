@@ -32,11 +32,11 @@ import { BarcodeScannerComponent } from '../../../shared/components/barcode-scan
   styleUrl: './collection-detail.component.scss',
 })
 export class CollectionDetailComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private collectionService = inject(CollectionService);
-  private collectibleService = inject(CollectibleService);
-  private dialog = inject(MatDialog);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly collectionService = inject(CollectionService);
+  private readonly collectibleService = inject(CollectibleService);
+  private readonly dialog = inject(MatDialog);
 
   collection: Collection | null = null;
   collectibles: Collectible[] = [];
@@ -85,13 +85,24 @@ export class CollectionDetailComponent implements OnInit {
     if (!this.collection) return;
 
     const dialogRef = this.dialog.open(AddCollectibleDialogComponent, {
-      // ✅ Mobile-first: usa maxWidth invece di width fissa
-      maxWidth: '95vw', // 95% viewport width su mobile
-      width: '600px', // Max 600px su desktop
-      maxHeight: '90vh', // 90% viewport height
-      panelClass: 'mobile-dialog', // Classe custom per stili
+      // Mobile-first sizing
+      maxWidth: '95vw',
+      width: '600px',
+      maxHeight: '90vh',
+
+      // Styling
+      panelClass: 'mobile-dialog',
+
+      // Accessibility & Focus (✅ FIX WARNING)
       disableClose: false,
-      autoFocus: false, // ✅ Evita zoom automatico su iOS
+      autoFocus: 'dialog', // ✅ Focus sul dialog (non primo input)
+      restoreFocus: true, // ✅ Ripristina focus alla chiusura
+
+      // ARIA labels
+      ariaLabel: 'Aggiungi oggetto alla collezione', // ✅ Accessibilità
+      role: 'dialog', // ✅ Ruolo ARIA corretto
+
+      // Data
       data: {
         collectionId: this.collection._id,
         collectionType: this.collection.type,

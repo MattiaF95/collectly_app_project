@@ -26,9 +26,11 @@ import {
   styleUrl: './collection-choice-dialog.component.scss',
 })
 export class CreateCollectionDialogComponent {
-  private dialogRef = inject(MatDialogRef<CreateCollectionDialogComponent>);
-  private collectionService = inject(CollectionService);
-  private router = inject(Router);
+  private readonly dialogRef = inject(
+    MatDialogRef<CreateCollectionDialogComponent>
+  );
+  private readonly collectionService = inject(CollectionService);
+  private readonly router = inject(Router);
 
   collectionTypes: CollectionTypeOption[] = COLLECTION_TYPES;
   selectedType: CollectionType | null = null;

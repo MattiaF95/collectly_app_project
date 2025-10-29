@@ -1,14 +1,36 @@
+// ============================================
+// FORM SELECT COMPONENT - Width Match Fix
+// ============================================
+
 :host {
   display: block;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-.full-width {
+
+.form-select-field {
   width: 100%;
-}
-::ng-deep .mat-mdc-form-field-infix {
-  min-height: 48px !important;
-}
-::ng-deep .mat-mdc-select {
-  font-size: 16px !important; // Previene zoom su iOS
-  min-height: 48px !important;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  // Mat form field interno
+  .mat-mdc-text-field-wrapper {
+    width: 100%;
+  }
+
+  // Select trigger
+  .mat-mdc-select {
+    width: 100%;
+
+    .mat-mdc-select-trigger {
+      width: 100%;
+    }
+
+    .mat-mdc-select-value {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }

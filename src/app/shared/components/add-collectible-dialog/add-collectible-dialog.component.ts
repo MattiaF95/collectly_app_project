@@ -1,4 +1,4 @@
-import { Component, inject, Inject } from '@angular/core';
+import { Component, inject, Inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -47,6 +47,7 @@ export interface AddCollectibleDialogData {
   ],
   templateUrl: './add-collectible-dialog.component.html',
   styleUrl: './add-collectible-dialog.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class AddCollectibleDialogComponent {
   private readonly dialogRef = inject(
@@ -91,18 +92,29 @@ export class AddCollectibleDialogComponent {
   ];
 
   audioCodecOptions: SelectOption[] = [
-    { value: 'dolby_digital', label: 'Dolby Digital' },
+    { value: 'dolby_digital', label: 'DOLBY DIGITAL' },
+    { value: 'dolby_digital_plus', label: 'DOLBY DIGITAL PLUS' },
+    { value: 'dts', label: 'DTS' },
     { value: 'dts_hd', label: 'DTS-HD' },
+    { value: 'dts_hd_ma', label: 'DTS-HD MA' },
+    { value: 'dts_hd_hr', label: 'DTS-HD HR' },
+    { value: 'dolby_atmos', label: 'DOLBY ATMOS' },
+    { value: 'dts_x', label: 'DTS:X' },
+    { value: 'pcm', label: 'PCM' },
     { value: 'aac', label: 'AAC' },
     { value: 'flac', label: 'FLAC' },
   ];
 
   audioFormatOptions: SelectOption[] = [
+    { value: '2.0', label: '1.0' },
     { value: '2.0', label: '2.0' },
     { value: '5.1', label: '5.1' },
     { value: '7.1', label: '7.1' },
+    { value: '7.1.4', label: '7.1.4' },
     { value: 'mono', label: 'Mono' },
   ];
+
+  selectedLanguage: string = '';
 
   audioLanguageOptions: SelectOption[] = [
     { value: 'italian', label: 'Italiano' },
@@ -110,6 +122,7 @@ export class AddCollectibleDialogComponent {
     { value: 'french', label: 'Francese' },
     { value: 'spanish', label: 'Spagnolo' },
     { value: 'german', label: 'Tedesco' },
+    { value: 'japanese', label: 'Giapponese' },
   ];
 
   subtitleOptions: SelectOption[] = [
@@ -587,26 +600,117 @@ export class AddCollectibleDialogComponent {
 
     this.creating = true;
 
+    let dataToSend = { ...this.formData };
+
+    // Pulisci audioLanguages
+    if (dataToSend.audioLanguages && dataToSend.audioLanguages.length > 0) {
+      dataToSend.audioLanguages = dataToSend.audioLanguages.map(
+        (audio: any) => {
+          const cleaned: any = { lang: audio.lang };
+          if (audio.codec?.trim()) cleaned.codec = audio.codec;
+          if (audio.format?.trim()) cleaned.format = audio.format;
+          return cleaned;
+        }
+      );
+    }
+
+    // ✅ Rimuovi campi vuoti
+    dataToSend = this.removeEmptyStrings(dataToSend);
+
+    console.log('🔍 Dati puliti da inviare:', dataToSend);
+
     this.collectibleService
-      .createCollectible(this.collectionId, this.formData)
+      .createCollectible(this.collectionId, dataToSend)
       .subscribe({
         next: () => {
           this.creating = false;
           this.confirmed = true;
-
-          setTimeout(() => {
-            this.dialogRef.close(true);
-          }, 1000);
+          setTimeout(() => this.dialogRef.close(true), 1000);
         },
         error: (error) => {
-          console.error('Errore creazione collectible:', error);
+          console.error('❌ Errore:', error);
           this.creating = false;
           alert("Errore durante l'aggiunta dell'oggetto");
         },
       });
   }
 
+  private removeEmptyStrings(obj: any): any {
+    const cleaned: any = {};
+
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+
+        // Salta valori vuoti
+        if (
+          value === '' ||
+          value === null ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
+          continue;
+        }
+
+        cleaned[key] = value;
+      }
+    }
+
+    return cleaned;
+  }
+
   close() {
     this.dialogRef.close(false);
+  }
+  // ============================================
+  // METODI GESTIONE AUDIO LANGUAGES
+  // ============================================
+
+  addAudioLanguage(): void {
+    if (!this.selectedLanguage) {
+      return;
+    }
+
+    const langLabel =
+      this.audioLanguageOptions.find(
+        (opt) => opt.value === this.selectedLanguage
+      )?.label || this.selectedLanguage;
+
+    if (!this.formData.audioLanguages) {
+      this.formData.audioLanguages = [];
+    }
+
+    this.formData.audioLanguages.push({
+      lang: langLabel,
+      codec: '',
+      format: '',
+    });
+
+    this.selectedLanguage = '';
+  }
+
+  removeAudioLanguage(index: number): void {
+    if (
+      this.formData.audioLanguages &&
+      this.formData.audioLanguages.length > index
+    ) {
+      this.formData.audioLanguages.splice(index, 1);
+    }
+  }
+
+  shouldShowFormat(audio: any): boolean {
+    return !!audio?.codec?.trim();
+  }
+
+  formatAudioDisplay(audio: any): string {
+    if (!audio) return '';
+
+    let display = audio.lang || '';
+    if (audio.codec) {
+      display += ` - ${audio.codec}`;
+      if (audio.format) {
+        display += ` ${audio.format}`;
+      }
+    }
+    return display;
   }
 }

@@ -21,7 +21,9 @@ body {
   background-color: #f5f5f5;
 }
 
-/* Utility Classes */
+// ============================================
+// UTILITY CLASSES
+// ============================================
 .full-width {
   width: 100%;
 }
@@ -56,7 +58,9 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Custom scrollbar */
+// ============================================
+// CUSTOM SCROLLBAR
+// ============================================
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -75,19 +79,9 @@ body {
   background: #555;
 }
 
-/* Dialog Personalizzato */
-.create-collection-dialog {
-  .mat-mdc-dialog-container {
-    border-radius: 16px;
-    padding: 0;
-  }
-}
-
 // ============================================
-// CAPACITOR / MOBILE GLOBAL STYLES
+// CAPACITOR / iOS SAFE AREAS
 // ============================================
-
-// iOS Safe Areas Support
 @supports (padding: env(safe-area-inset-top)) {
   body {
     padding-top: env(safe-area-inset-top);
@@ -104,30 +98,7 @@ input,
 select,
 textarea,
 button {
-  font-size: 16px !important;
-}
-
-// ============================================
-// MOBILE DIALOG OVERRIDES
-// ============================================
-.mobile-dialog {
-  .mat-mdc-dialog-container {
-    border-radius: 16px 16px 0 0;
-    max-height: 90vh;
-
-    @media (max-width: 600px) {
-      border-radius: 16px 16px 0 0;
-      margin: 0;
-      width: 100vw !important;
-      max-width: 100vw !important;
-      height: auto;
-      max-height: 90vh;
-    }
-  }
-
-  .mat-mdc-dialog-surface {
-    border-radius: 16px 16px 0 0;
-  }
+  font-size: 16px;
 }
 
 // ============================================
@@ -141,9 +112,6 @@ a,
   cursor: pointer;
 }
 
-// ============================================
-// PREVENT TEXT SELECTION ON BUTTONS
-// ============================================
 button,
 .mat-mdc-button,
 .mat-mdc-raised-button,
@@ -153,77 +121,83 @@ button,
 }
 
 // ============================================
-// MATERIAL DIALOG MOBILE OVERRIDES
+// MATERIAL BUTTON SIZES (Mobile Touch Target)
 // ============================================
+.mat-mdc-button-base {
+  min-height: 44px;
+}
+
+.mat-mdc-icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+// ============================================
+// MOBILE DIALOG
+// ============================================
+.mobile-dialog {
+  .mat-mdc-dialog-container {
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh;
+
+    @media (max-width: 600px) {
+      margin: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: auto;
+      max-height: 90vh;
+    }
+  }
+}
+
+.create-collection-dialog {
+  .mat-mdc-dialog-container {
+    border-radius: 16px;
+    padding: 0;
+  }
+}
+
 @media (max-width: 600px) {
   .mat-mdc-dialog-container {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    margin: 0 !important;
-    border-radius: 16px 16px 0 0 !important;
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    border-radius: 16px 16px 0 0;
   }
 
   .cdk-overlay-pane {
-    max-width: 100vw !important;
-    width: 100vw !important;
+    max-width: 100vw;
+    width: 100vw;
   }
 }
 
 // ============================================
-// SNACKBAR MOBILE POSITIONING
+// SNACKBAR MOBILE
 // ============================================
 .mat-mdc-snack-bar-container {
   @supports (padding: env(safe-area-inset-bottom)) {
-    margin-bottom: env(safe-area-inset-bottom) !important;
+    margin-bottom: env(safe-area-inset-bottom);
   }
 }
 
 // ============================================
-// MATERIAL FORM FIELD MOBILE FIXES
+// FAB BUTTON POSITIONING
 // ============================================
-.mat-mdc-form-field {
-  .mat-mdc-input-element,
-  .mat-mdc-select-trigger {
-    font-size: 16px !important;
-  }
-
-  @media (max-width: 600px) {
-    margin-bottom: 12px;
+.mat-mdc-fab,
+.mat-mdc-mini-fab {
+  @supports (padding: env(safe-area-inset-bottom)) {
+    bottom: calc(16px + env(safe-area-inset-bottom));
   }
 }
 
 // ============================================
-// BACKDROP MOBILE
+// BACKDROP
 // ============================================
 .cdk-overlay-backdrop {
   backdrop-filter: blur(4px);
 
   @media (max-width: 600px) {
     backdrop-filter: blur(2px);
-  }
-}
-
-// ============================================
-// SELECT DROPDOWN MOBILE
-// ============================================
-.mat-mdc-select-panel {
-  @media (max-width: 600px) {
-    max-height: 60vh !important;
-  }
-}
-
-// ============================================
-// SAFE AREA UTILITY CLASSES
-// ============================================
-.safe-area-top {
-  @supports (padding: env(safe-area-inset-top)) {
-    padding-top: env(safe-area-inset-top);
-  }
-}
-
-.safe-area-bottom {
-  @supports (padding: env(safe-area-inset-bottom)) {
-    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
@@ -239,55 +213,151 @@ button,
 }
 
 // ============================================
-// ACCESSIBILITY - FOCUS VISIBLE
+// ACCESSIBILITY
 // ============================================
 *:focus-visible {
   outline: 2px solid #3f51b5;
   outline-offset: 2px;
 }
 
+.safe-area-top {
+  @supports (padding: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+.safe-area-bottom {
+  @supports (padding: env(safe-area-inset-bottom)) {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 // ============================================
-// DARK MODE SUPPORT - Contrasto adeguato per accessibility
+// ⚡ FIX SELECT PANEL - FORCE WIDTH = TRIGGER
 // ============================================
-@media (prefers-color-scheme: dark) {
-  // Container principale
-  .dialog-container {
-    background: #1a1a1a; // Nero soft (non puro)
-    color: #f0f0f0; // Bianco alto contrasto
+
+// Override aggressivo per forzare larghezza panel = trigger
+.cdk-overlay-pane {
+  // Previeni overflow viewport
+  max-width: calc(100vw - 32px);
+
+  @media (max-width: 600px) {
+    max-width: calc(100vw - 24px);
   }
 
-  // Header
+  // Forza tutti i panel select dentro overlay
+  .mat-mdc-select-panel {
+    // ✅ CHIAVE: Rimuovi min-width inline di Material
+    min-width: 0 !important;
+
+    // ✅ Larghezza = 100% del trigger
+    width: 100% !important;
+
+    // ✅ Max-width per sicurezza
+    max-width: 100% !important;
+
+    // Altezza
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    @media (max-width: 600px) {
+      max-height: 50vh;
+    }
+
+    // Opzioni dentro il panel
+    .mat-mdc-option {
+      font-size: 14px;
+      min-height: 44px;
+      padding: 0 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      .mdc-list-item__primary-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+// Panel class custom (se usata)
+.form-select-panel {
+  &.mat-mdc-select-panel {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+// ============================================
+// MATERIAL FORM FIELD MOBILE
+// ============================================
+.mat-mdc-form-field {
+  .mat-mdc-input-element,
+  .mat-mdc-select-trigger {
+    font-size: 16px;
+  }
+
+  @media (max-width: 600px) {
+    margin-bottom: 12px;
+  }
+
+  // Trigger select deve rispettare parent width
+  .mat-mdc-select {
+    width: 100%;
+
+    .mat-mdc-select-trigger {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .mat-mdc-select-value {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// ============================================
+// DARK MODE SUPPORT
+// ============================================
+@media (prefers-color-scheme: dark) {
+  .dialog-container {
+    background: #1a1a1a;
+    color: #f0f0f0;
+  }
+
   .dialog-header {
     background: #242424;
     border-bottom-color: #404040;
 
     h2 {
-      color: #ffffff; // Bianco puro per titolo
+      color: #ffffff;
     }
 
     .subtitle {
-      color: #cccccc; // Grigio chiaro
+      color: #cccccc;
     }
   }
 
-  // Content area
   .dialog-content {
     background: #1a1a1a;
   }
 
-  // Form sections
   .form-section h3 {
     color: #ffffff;
     border-bottom-color: #404040;
   }
 
-  // Audio/Complex fields
   .audio-language-group {
     background: #242424;
     border-color: #404040;
   }
 
-  // Conditional fields
   .conditional-fields {
     background: #242424;
     border-left-color: #6b7fd9;
@@ -297,110 +367,73 @@ button,
     }
   }
 
-  // Footer
   .dialog-actions {
     background: #242424;
     border-top-color: #404040;
   }
 
-  // Material form fields
-  ::ng-deep {
-    // Input fields
-    .mat-mdc-form-field {
-      .mdc-text-field--filled {
-        background-color: #2d2d2d !important;
-      }
-
-      input,
-      textarea {
-        color: #f0f0f0 !important;
-        background: #2d2d2d !important;
-      }
-
-      .mat-mdc-form-field-label {
-        color: #b0b0b0 !important;
-      }
-
-      .mat-mdc-floating-label--float .mdc-floating-label {
-        color: #b0b0b0 !important;
-      }
+  .mat-mdc-form-field {
+    .mdc-text-field--filled {
+      background-color: #2d2d2d;
     }
 
-    // Select dropdown
-    .mat-mdc-select {
+    input,
+    textarea {
       color: #f0f0f0;
-
-      .mdc-select__anchor {
-        background-color: #2d2d2d !important;
-      }
+      background: #2d2d2d;
     }
 
-    // Placeholder text
-    input::placeholder,
-    textarea::placeholder {
-      color: #808080 !important;
-    }
-
-    // Select panel (dropdown aperto)
-    .mat-mdc-select-panel {
-      background-color: #2d2d2d !important;
-
-      .mat-mdc-option {
-        color: #f0f0f0;
-
-        &:hover {
-          background-color: #3a3a3a;
-        }
-
-        &.mat-mdc-selected {
-          background-color: #404040;
-        }
-      }
-    }
-
-    // Buttons
-    .mat-mdc-button,
-    .mat-mdc-raised-button {
-      color: #f0f0f0;
-
-      &[color="primary"] {
-        background-color: #5c6fa8 !important; // Blu dark mode
-        color: #ffffff;
-      }
-    }
-
-    // Chip inputs
-    .mat-mdc-chip {
-      background-color: #2d2d2d !important;
-      color: #f0f0f0;
-      border-color: #404040;
-    }
-
-    // Spinner/Loading
-    mat-spinner circle {
-      stroke: #5c6fa8 !important;
+    .mat-mdc-form-field-label {
+      color: #b0b0b0;
     }
   }
-}
 
-// ============================================
-// MATERIAL THEME MOBILE OVERRIDES
-// ============================================
-.mat-mdc-button-base {
-  min-height: 44px !important;
-}
+  .mat-mdc-select {
+    color: #f0f0f0;
 
-.mat-mdc-icon-button {
-  min-width: 44px !important;
-  min-height: 44px !important;
-}
+    .mdc-select__anchor {
+      background-color: #2d2d2d;
+    }
+  }
 
-// ============================================
-// FAB BUTTON POSITIONING (Mobile)
-// ============================================
-.mat-mdc-fab,
-.mat-mdc-mini-fab {
-  @supports (padding: env(safe-area-inset-bottom)) {
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  input::placeholder,
+  textarea::placeholder {
+    color: #808080;
+  }
+
+  .mat-mdc-select-panel {
+    background-color: #2d2d2d;
+
+    .mat-mdc-option {
+      color: #f0f0f0;
+
+      &:hover {
+        background-color: #3a3a3a;
+      }
+
+      &.mat-mdc-selected {
+        background-color: #404040;
+      }
+    }
+  }
+
+  .mat-mdc-button,
+  .mat-mdc-raised-button {
+    color: #f0f0f0;
+
+    &[color="primary"] {
+      background-color: #5c6fa8;
+      color: #ffffff;
+    }
+  }
+
+  .mat-mdc-chip {
+    background-color: #2d2d2d;
+    color: #f0f0f0;
+    border-color: #404040;
+  }
+
+  mat-spinner circle {
+    stroke: #5c6fa8;
   }
 }

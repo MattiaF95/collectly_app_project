@@ -1,23 +1,26 @@
 // ============================================
-// MOBILE-FIRST DIALOG STYLES
-// Ottimizzato per Capacitor (iOS/Android)
+// HOST
 // ============================================
-
 :host {
   display: block;
   width: 100%;
   height: 100%;
 }
 
+// ============================================
+// DIALOG CONTAINER
+// ============================================
 .dialog-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   max-height: 90vh;
+  width: 100%;
   overflow: hidden;
   position: relative;
   background: white;
   color: #333;
+  box-sizing: border-box;
 }
 
 // ============================================
@@ -60,7 +63,7 @@
 }
 
 // ============================================
-// CONTENT (Scrollable)
+// CONTENT
 // ============================================
 .dialog-content {
   flex: 1;
@@ -71,6 +74,7 @@
   color: #333;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  box-sizing: border-box;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -155,78 +159,250 @@
 }
 
 // ============================================
-// BARCODE INPUT
+// AUDIO LANGUAGES SECTION
 // ============================================
-.barcode-input-wrapper {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  app-form-input {
-    flex: 1;
-  }
-
-  .barcode-scan-btn {
-    flex-shrink: 0;
-    min-width: 48px;
-    height: 48px;
-
-    @media (max-width: 600px) {
-      width: 100%;
-      height: 44px;
-    }
-
-    mat-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-    }
-  }
-}
-
-// ============================================
-// IMAGE UPLOAD
-// ============================================
-.image-upload-section {
+.audio-languages-section {
   margin: 16px 0;
 
-  app-form-image-upload {
-    display: block;
-    width: 100%;
-  }
-}
-
-// ============================================
-// CONDITIONAL FIELDS
-// ============================================
-.conditional-fields {
-  padding: 16px;
-  padding-left: 24px;
-  border-left: 3px solid #3f51b5;
-  margin-top: 12px;
-  background: #f5f7ff;
-  border-radius: 4px;
-
-  @media (max-width: 600px) {
-    padding-left: 16px;
-  }
-
-  .conditional-label {
-    font-size: 13px;
-    color: #3f51b5;
+  .section-label {
+    font-size: 14px;
     font-weight: 600;
+    color: #666;
     margin-bottom: 12px;
     display: block;
   }
+
+  .audio-selector {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    margin-bottom: 16px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    app-form-select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .add-audio-btn {
+      flex-shrink: 0;
+      height: 48px;
+      min-width: 120px;
+
+      @media (max-width: 600px) {
+        width: 100%;
+        height: 44px;
+      }
+    }
+  }
+
+  .audio-languages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .audio-language-item {
+    padding: 12px 16px;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+
+    .audio-lang-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .audio-lang-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .remove-btn {
+        width: 32px;
+        height: 32px;
+        color: #f44336;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    .audio-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
+
+      @media (max-width: 400px) {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      app-form-select {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
+      &:has(.audio-codec:only-child) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .audio-empty {
+    text-align: center;
+    padding: 16px;
+    background: #f9f9f9;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #424242;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
 }
 
 // ============================================
-// FOOTER (Actions)
+// MATERIAL OVERRIDES
+// ============================================
+::ng-deep {
+  // Dialog surface
+  app-add-collectible-dialog {
+    .mat-mdc-dialog-surface {
+      background: white;
+      color: #333;
+      overflow: visible;
+    }
+
+    .mat-mdc-dialog-container {
+      background: white;
+      overflow: visible;
+    }
+  }
+
+  // Form fields
+  .dialog-content {
+    .mat-mdc-form-field {
+      width: 100%;
+      font-size: 16px;
+
+      .mat-mdc-text-field-wrapper {
+        padding: 0;
+      }
+
+      .mat-mdc-form-field-infix {
+        min-height: 48px;
+        padding: 8px 0;
+      }
+
+      .mdc-text-field--filled {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+
+      input,
+      textarea,
+      select {
+        font-size: 16px;
+        padding: 12px;
+        border-radius: 4px;
+        color: #333;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .mat-mdc-form-field-label,
+      .mdc-floating-label {
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      textarea {
+        min-height: 80px;
+        max-height: 200px;
+        resize: vertical;
+        line-height: 1.5;
+      }
+    }
+
+    // Select
+    .mat-mdc-select {
+      color: #333;
+      width: 100%;
+
+      .mat-mdc-select-trigger {
+        min-height: 48px;
+        width: 100%;
+      }
+
+      .mat-mdc-select-value {
+        font-size: 16px;
+        color: #333;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mat-mdc-select-arrow {
+        color: rgba(0, 0, 0, 0.54);
+      }
+    }
+
+    // Checkbox
+    .mat-mdc-checkbox {
+      margin: 8px 0;
+      color: #333;
+
+      .mdc-checkbox {
+        width: 24px;
+        height: 24px;
+      }
+
+      .mdc-form-field {
+        font-size: 16px;
+        color: #333;
+      }
+
+      .mdc-checkbox__background {
+        border-color: rgba(0, 0, 0, 0.54);
+      }
+    }
+
+    // Buttons
+    .mat-mdc-button,
+    .mat-mdc-raised-button,
+    .mat-mdc-icon-button {
+      min-height: 44px;
+      font-size: 16px;
+
+      &:not(.mat-mdc-icon-button) {
+        padding: 0 20px;
+      }
+    }
+  }
+}
+
+// ============================================
+// FOOTER
 // ============================================
 .dialog-actions {
   flex-shrink: 0;
@@ -261,156 +437,15 @@
       color: #666;
     }
 
-    &[mat-raised-button] {
-      &[color="primary"] {
-        background-color: #3f51b5;
-        color: white;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-      }
-    }
-  }
-}
-
-// ============================================
-// LOADING STATE
-// ============================================
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.95);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  gap: 16px;
-  backdrop-filter: blur(2px);
-
-  mat-spinner {
-    margin: 0;
-  }
-
-  p {
-    font-size: 16px;
-    color: #666;
-    font-weight: 500;
-  }
-}
-
-.success-message {
-  text-align: center;
-  color: #4caf50;
-  font-size: 18px;
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-
-  mat-icon {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
-    color: #4caf50;
-  }
-}
-
-// ============================================
-// FIELD LABELS
-// ============================================
-.field-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-  display: block;
-
-  &.required::after {
-    content: " *";
-    color: #f44336;
-  }
-}
-
-// ============================================
-// HELPER TEXT
-// ============================================
-.helper-text {
-  font-size: 12px;
-  color: #666;
-  margin-top: 4px;
-  display: block;
-  line-height: 1.4;
-}
-
-// ============================================
-// EMPTY STATE
-// ============================================
-.empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  color: #999;
-
-  mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    opacity: 0.5;
-  }
-
-  p {
-    margin: 12px 0 0;
-    font-size: 14px;
-  }
-}
-
-// ============================================
-// CAPACITOR SPECIFIC ADJUSTMENTS
-// ============================================
-@media (max-width: 600px) {
-  input,
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
-
-  .form-content {
-    gap: 12px;
-  }
-
-  .form-row {
-    gap: 12px;
-  }
-
-  .dialog-header {
-    padding: 12px 16px;
-
-    h2 {
-      font-size: 16px;
+    &[mat-raised-button][color="primary"] {
+      background-color: #3f51b5;
+      color: white;
     }
 
-    .subtitle {
-      font-size: 13px;
+    &:disabled {
+      opacity: 0.5;
     }
   }
-}
-
-// ============================================
-// ACCESSIBILITY
-// ============================================
-*:focus-visible {
-  outline: 2px solid #3f51b5;
-  outline-offset: 2px;
-}
-
-button:focus-visible {
-  outline: 2px solid #3f51b5;
-  outline-offset: 2px;
 }
 
 // ============================================
@@ -424,154 +459,5 @@ button:focus-visible {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-// ============================================
-// MATERIAL OVERRIDE (UN SOLO ::ng-deep)
-// ============================================
-::ng-deep {
-  // Dialog surface override
-  .mat-mdc-dialog-surface {
-    background: white !important;
-    color: #333 !important;
-  }
-
-  .mat-mdc-dialog-container {
-    background: white !important;
-  }
-
-  // Form fields
-  .mat-mdc-form-field {
-    width: 100%;
-    font-size: 16px !important;
-
-    .mat-mdc-text-field-wrapper {
-      padding: 0;
-    }
-
-    .mat-mdc-form-field-infix {
-      min-height: 48px;
-      padding: 8px 0;
-    }
-
-    .mat-mdc-form-field-subscript-wrapper {
-      margin-top: 4px;
-    }
-
-    .mdc-text-field--filled {
-      background-color: rgba(0, 0, 0, 0.04) !important;
-    }
-
-    input,
-    textarea,
-    select {
-      font-size: 16px !important;
-      padding: 12px;
-      border-radius: 4px;
-      color: #333 !important;
-
-      &:focus {
-        outline: none;
-      }
-    }
-
-    .mat-mdc-form-field-label,
-    .mdc-floating-label {
-      color: rgba(0, 0, 0, 0.6) !important;
-    }
-
-    input[type="number"] {
-      &::-webkit-outer-spin-button,
-      &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-    }
-
-    textarea {
-      min-height: 80px;
-      max-height: 200px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-  }
-
-  // Chip inputs
-  .mat-mdc-chip-set {
-    .mat-mdc-chip {
-      font-size: 14px;
-      min-height: 36px;
-      border-radius: 16px;
-      padding: 8px 12px;
-      background-color: #e0e0e0 !important;
-      color: #333 !important;
-    }
-
-    .mat-mdc-chip-remove {
-      min-width: 24px;
-      min-height: 24px;
-    }
-  }
-
-  // Select dropdown
-  .mat-mdc-select {
-    color: #333 !important;
-
-    .mat-mdc-select-trigger {
-      min-height: 48px;
-    }
-
-    .mat-mdc-select-value {
-      font-size: 16px;
-      color: #333 !important;
-    }
-
-    .mat-mdc-select-arrow {
-      color: rgba(0, 0, 0, 0.54) !important;
-    }
-  }
-
-  // Buttons
-  .mat-mdc-button,
-  .mat-mdc-raised-button,
-  .mat-mdc-icon-button {
-    min-height: 44px;
-    font-size: 16px;
-
-    &:not(.mat-mdc-icon-button) {
-      padding: 0 20px;
-    }
-  }
-
-  // Checkbox
-  .mat-mdc-checkbox {
-    margin: 8px 0;
-    color: #333 !important;
-
-    .mdc-checkbox {
-      width: 24px;
-      height: 24px;
-    }
-
-    .mdc-form-field {
-      font-size: 16px;
-      color: #333 !important;
-    }
-
-    .mdc-checkbox__background {
-      border-color: rgba(0, 0, 0, 0.54) !important;
-    }
-  }
-
-  // Radio buttons
-  .mat-mdc-radio-button {
-    margin: 8px 0;
-    color: #333 !important;
-
-    .mdc-radio {
-      width: 24px;
-      height: 24px;
-    }
   }
 }

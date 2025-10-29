@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -17,6 +17,9 @@ export interface SelectOption {
   selector: 'app-form-select',
   standalone: true,
   imports: [CommonModule, FormsModule, MatFormFieldModule, MatSelectModule],
+  templateUrl: './form-select.component.html',
+  styleUrl: './form-select.component.scss',
+  encapsulation: ViewEncapsulation.None,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -24,9 +27,6 @@ export interface SelectOption {
       multi: true,
     },
   ],
-
-  templateUrl: './form-select.component.html',
-  styleUrl: './form-select.component.scss',
 })
 export class FormSelectComponent implements ControlValueAccessor {
   @Input() label: string = '';

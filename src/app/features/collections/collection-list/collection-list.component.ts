@@ -228,9 +228,9 @@ import { CreateCollectionDialogComponent } from '../../../shared/components/coll
   ],
 })
 export class CollectionListComponent implements OnInit {
-  private collectionService = inject(CollectionService);
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
+  private readonly collectionService = inject(CollectionService);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   collections: Collection[] = [];
 
@@ -250,10 +250,20 @@ export class CollectionListComponent implements OnInit {
   }
 
   createCollection() {
-    this.dialog.open(CreateCollectionDialogComponent, {
+    const dialogRef = this.dialog.open(CreateCollectionDialogComponent, {
       width: '600px',
       disableClose: false,
       panelClass: 'create-collection-dialog',
+      restoreFocus: true, // Ripristina focus dopo chiusura
+      autoFocus: 'dialog', // Focus sul dialog, non primo campo
+      ariaLabel: 'Crea nuova collezione',
+      role: 'dialog',
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean | undefined) => {
+      if (result) {
+        this.loadCollections();
+      }
     });
   }
 
@@ -262,7 +272,7 @@ export class CollectionListComponent implements OnInit {
   }
 
   editCollection(collection: Collection) {
-    // TODO: Aprire dialog per modificare collezione
+    // Aprire dialog per modificare collezione
     alert('Funzionalità in sviluppo');
   }
 
