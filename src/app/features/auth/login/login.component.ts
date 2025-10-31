@@ -1,3 +1,4 @@
+// src/app/features/auth/login/login.component.ts
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,13 +9,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpErrorResponse } from '@angular/common/http'; // Importa per la gestione degli errori
+
 import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../core/models/user.model'; // ✅ L'import va qui, all'inizio del file
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,
+    CommonModule, // ✅ Ora l'array `imports` è corretto
     FormsModule,
     RouterModule,
     MatCardModule,
@@ -110,19 +114,21 @@ import { AuthService } from '../../../core/services/auth.service';
       .login-card {
         width: 100%;
         max-width: 400px;
+        border-radius: 12px;
 
         mat-card-header {
           display: flex;
           flex-direction: column;
           align-items: center;
           padding: 2rem 0 1rem;
+          border-bottom: 1px solid #eee;
 
           mat-card-title {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 2rem;
-            color: #3498db;
+            color: #3f51b5; // Colore primario del tema
 
             mat-icon {
               font-size: 2rem;
@@ -133,6 +139,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
           mat-card-subtitle {
             margin-top: 0.5rem;
+            color: #666;
           }
         }
 
@@ -142,7 +149,7 @@ import { AuthService } from '../../../core/services/auth.service';
           form {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.25rem;
           }
 
           .full-width {
@@ -154,6 +161,7 @@ import { AuthService } from '../../../core/services/auth.service';
             font-size: 14px;
             margin: -0.5rem 0 0.5rem;
             text-align: center;
+            font-weight: 500;
           }
         }
 
@@ -166,7 +174,7 @@ import { AuthService } from '../../../core/services/auth.service';
             color: #666;
 
             a {
-              color: #3498db;
+              color: #3f51b5; // Colore primario
               text-decoration: none;
               font-weight: 500;
 
@@ -181,8 +189,8 @@ import { AuthService } from '../../../core/services/auth.service';
   ],
 })
 export class LoginComponent {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   credentials = {
     email: '',
@@ -202,14 +210,23 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService
-      .login(this.credentials.email, this.credentials.password)
+      .login({
+        email: this.credentials.email,
+        password: this.credentials.password,
+      })
       .subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
+        next: (user: User) => {
+          // Tipizza il parametro
+          console.log('Login riuscito:', user);
+          this.router.navigate(['/']);
+          this.loading = false;
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
+          // Tipizza l'errore
           console.error('Errore login:', error);
-          this.errorMessage = error.error?.message || 'Errore durante il login';
+          this.errorMessage =
+            error.error?.message ||
+            'Credenziali non valide o errore del server.';
           this.loading = false;
         },
       });

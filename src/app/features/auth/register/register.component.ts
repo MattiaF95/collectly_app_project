@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -217,8 +218,8 @@ import { AuthService } from '../../../core/services/auth.service';
   ],
 })
 export class RegisterComponent {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   user = {
     email: '',
@@ -246,14 +247,12 @@ export class RegisterComponent {
     this.errorMessage = '';
 
     this.authService.register(this.user).subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
+      next: (user) => {
+        console.log('Registrazione riuscita:', user);
+        this.router.navigate(['/']);
       },
-      error: (error) => {
-        console.error('Errore registrazione:', error);
-        this.errorMessage =
-          error.error?.message || 'Errore durante la registrazione';
-        this.loading = false;
+      error: (error: HttpErrorResponse) => {
+        console.error('Errore di registrazione:', error.message);
       },
     });
   }

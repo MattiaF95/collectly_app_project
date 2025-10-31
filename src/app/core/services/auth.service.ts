@@ -1,64 +1,93 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { Preferences } from '@capacitor/preferences';
 import { User } from '../models/user.model';
-import { environment } from '../../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+const AUTH_TOKEN_KEY = 'auth-token';
+const AUTH_USER_KEY = 'auth-user';
+
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
-  private readonly http = inject(HttpClient);
-  private readonly router = inject(Router);
   private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private authToken: string | null = null;
 
-  constructor() {
-    const token = this.getToken();
-    if (token) {
-      this.loadCurrentUser();
+  constructor(private readonly http: HttpClient) {}
+
+  // Chiamalo dall'AppComponent all'avvio
+  async initAuthState(): Promise<void> {
+    const { value: token } = await Preferences.get({ key: AUTH_TOKEN_KEY });
+    const { value: userStr } = await Preferences.get({ key: AUTH_USER_KEY });
+
+    if (token && userStr) {
+      console.log('Token e utente trovati, ripristino sessione...');
+      this.authToken = token;
+      const user = JSON.parse(userStr);
+      this.currentUserSubject.next(user);
     }
   }
 
-  register(user: Partial<User>): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/auth/register`, user);
-  }
-
-  login(email: string, password: string): Observable<any> {
+  // Al login, salva token e utente
+  login(credentials: { email: string; password: string }): Observable<User> {
     return this.http
-      .post<{ token: string; user: User }>(`${environment.apiUrl}/auth/login`, {
-        email,
-        password,
-      })
+      .post<{ token: string; user: User }>('/api/auth/login', credentials)
       .pipe(
-        tap((response) => {
-          this.setToken(response.token);
-          this.currentUserSubject.next(response.user);
-        })
+        tap(async ({ token, user }) => {
+          this.authToken = token;
+          this.currentUserSubject.next(user);
+
+          // Salva in modo persistente
+          await Preferences.set({ key: AUTH_TOKEN_KEY, value: token });
+          await Preferences.set({
+            key: AUTH_USER_KEY,
+            value: JSON.stringify(user),
+          });
+        }),
+        map((response) => response.user)
       );
   }
 
-  logout(): void {
-    localStorage.removeItem('token');
+  // Al logout, pulisci tutto
+  async logout(): Promise<void> {
+    this.authToken = null;
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+
+    // Rimuovi dallo storage persistente
+    await Preferences.remove({ key: AUTH_TOKEN_KEY });
+    await Preferences.remove({ key: AUTH_USER_KEY });
   }
 
-  private loadCurrentUser(): void {
-    this.http.get<User>(`${environment.apiUrl}/auth/me`).subscribe({
-      next: (user) => this.currentUserSubject.next(user),
-      error: () => this.logout(),
-    });
+  // Metodi di utilità
+  isAuthenticated(): boolean {
+    return !!this.currentUserSubject.value;
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.authToken;
   }
 
-  private setToken(token: string): void {
-    localStorage.setItem('token', token);
-  }
+  register(userData: User): Observable<User> {
+    // Usa il tuo modello User
+    return this.http
+      .post<{ token: string; user: User }>('/api/auth/register', userData)
+      .pipe(
+        tap(async ({ token, user }) => {
+          // Dopo la registrazione, effettua automaticamente il login
+          this.authToken = token;
+          this.currentUserSubject.next(user);
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
+          // Salva in modo persistente
+          await Preferences.set({ key: AUTH_TOKEN_KEY, value: token });
+          await Preferences.set({
+            key: AUTH_USER_KEY,
+            value: JSON.stringify(user),
+          });
+        }),
+        map((response) => response.user)
+      );
   }
 }
