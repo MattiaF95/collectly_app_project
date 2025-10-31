@@ -1,7 +1,5 @@
-// src/app/app.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,13 +8,8 @@ import { AuthService } from './core/services/auth.service';
   template: `<router-outlet></router-outlet>`,
   styles: [],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'collectly';
 
-  constructor(private readonly authService: AuthService) {}
-
-  ngOnInit(): void {
-    // Chiama il metodo di inizializzazione per ripristinare lo stato di login
-    this.authService.initAuthState();
-  }
+  constructor() {}
 }
