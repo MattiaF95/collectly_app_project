@@ -30,30 +30,36 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 Questa sezione documenta il flusso di autenticazione dell'applicazione, con un focus sulla persistenza della sessione utente al refresh della pagina, sia per il web sia per le piattaforme mobili (iOS/Android) tramite Capacitor.
 
-## Problema: Perdita dello Stato al Refresh della Pagina
+## Problema: Perdita dello Stato e Race Condition al Refresh
 
-Nelle applicazioni a singola pagina (SPA), lo stato dell'applicazione, inclusi i dati di autenticazione come il token JWT, è conservato nella memoria JavaScript. Quando l'utente ricarica la pagina, questa memoria viene cancellata, causando la perdita dello stato di login e la disconnessione forzata dell'utente.
+Nelle applicazioni a singola pagina (SPA), lo stato dell'applicazione (incluso il token di autenticazione) è conservato nella memoria JavaScript. Al refresh della pagina, questa memoria viene cancellata.
 
-## Soluzione: Persistenza del Token tramite Capacitor Preferences
+Il tentativo di ripristinare lo stato di login durante l'inizializzazione del componente principale (`AppComponent`) crea una **race condition**:
 
-Per garantire che la sessione utente sopravviva al refresh, il token di autenticazione e i dati utente vengono salvati in uno storage persistente. La soluzione adottata utilizza il plugin **`@capacitor/preferences ^6.0.3`**, che offre un'API unificata per la persistenza dei dati:
+1.  La navigazione e le guardie di rotta (`AuthGuard`) vengono eseguite **immediatamente**.
+2.  L'operazione asincrona di ripristino dello stato di login non è ancora terminata.
+3.  La guardia di rotta non trova un utente autenticato e reindirizza alla pagina di login, anche se un token valido esiste nello storage.
+
+## Soluzione: Blocco dell'App con `APP_INITIALIZER`
+
+Per risolvere questa race condition, utilizziamo il token di dependency injection **`APP_INITIALIZER`** di Angular. Questo approccio garantisce che la logica di ripristino dell'autenticazione venga eseguita e completata **prima** che l'applicazione venga completamente avviata e che il routing diventi attivo.
+
+La persistenza del token è gestita tramite il plugin **`@capacitor/preferences ^6.0.3`**, che offre un'API unificata:
 
 - **Web**: Utilizza `localStorage`.
 - **iOS**: Utilizza `UserDefaults` (storage nativo e sicuro).
 - **Android**: Utilizza `SharedPreferences` (storage nativo e sicuro).
 
-## Flusso di Inizializzazione dell'Autenticazione
+## Flusso di Inizializzazione dell'Autenticazione (Corretto)
 
-Il flusso di ripristino della sessione all'avvio dell'app o al refresh della pagina è il seguente:
+Il flusso di ripristino della sessione è ora robusto e privo di race condition:
 
-1.  **Caricamento Iniziale**: Angular carica il componente radice dell'applicazione, `AppComponent`.
-2.  **Iniezione del Servizio**: Il costruttore di `AppComponent` inietta `AuthService`, il servizio centrale per la gestione dell'autenticazione.
-3.  **Esecuzione di `ngOnInit`**: Una volta che il componente è pronto, viene eseguito il suo metodo `ngOnInit`.
-4.  **Inizializzazione dello Stato Auth**: `ngOnInit` chiama il metodo asincrono `authService.initAuthState()`.
-5.  **Controllo dello Storage Persistente**: `AuthService` interroga il plugin `@capacitor/preferences` per verificare la presenza di un token e di dati utente precedentemente salvati.
-6.  **Ripristino dello Stato**: Se un token e i dati utente vengono trovati, `AuthService` popola il suo stato interno (es. un `BehaviorSubject`) con queste informazioni.
-7.  **Sessione Ripristinata**: A questo punto, l'applicazione sa che l'utente è autenticato. Di conseguenza:
-    - L'`AuthInterceptor` può aggiungere correttamente il token `Authorization: Bearer ...` alle richieste HTTP in uscita.
-    - L'`AuthGuard` può proteggere le rotte riservate, consentendo l'accesso.
+1.  **Avvio dell'Applicazione**: Il processo di bootstrap di Angular ha inizio.
+2.  **Esecuzione di `APP_INITIALIZER`**: Prima di renderizzare qualsiasi componente, Angular esegue le funzioni fornite tramite il token `APP_INITIALIZER`. Nel nostro caso, esegue una factory che chiama `authService.initAuthState()`.
+3.  **Attesa del Ripristino**: L'intera applicazione **attende** che la `Promise` restituita da `initAuthState()` venga risolta. Durante questa fase, il rendering e la navigazione sono in pausa.
+4.  **Controllo dello Storage**: `AuthService` interroga il plugin `@capacitor/preferences` per leggere il token e i dati utente salvati.
+5.  **Ripristino dello Stato**: Se i dati esistono, `AuthService` popola il suo stato interno (es. un `BehaviorSubject`).
+6.  **Avvio Completo dell'App**: Solo dopo che la Promise è stata risolta, Angular completa il processo di bootstrap. L'applicazione viene renderizzata e il router inizia a processare la rotta iniziale.
+7.  **Esecuzione delle Guardie di Rotta**: A questo punto, quando l'`AuthGuard` viene eseguito, interroga `AuthService`, che ha già uno stato di autenticazione aggiornato e corretto.
 
-**Risultato**: L'utente rimane autenticato e può continuare a navigare nell'applicazione senza doversi autenticare di nuovo, garantendo un'esperienza utente fluida e continua.
+**Risultato**: L'utente rimane autenticato e sulla pagina corretta dopo un refresh, perché la logica di protezione delle rotte viene eseguita solo dopo che lo stato di login è stato completamente ripristinato, eliminando ogni race condition.
