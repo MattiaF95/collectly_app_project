@@ -21,7 +21,6 @@ import { AuthService } from '../../core/services/auth.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatTabsModule,
   ],
   templateUrl: './main.layout.component.html',
   styleUrl: './main.layout.component.scss',
