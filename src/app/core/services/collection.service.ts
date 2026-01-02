@@ -10,6 +10,10 @@ export class CollectionService {
   private collectionsSubject = new BehaviorSubject<Collection[]>([]);
   public collections$ = this.collectionsSubject.asObservable();
 
+  get currentCollections(): Collection[] {
+    return this.collectionsSubject.value;
+  }
+
   getCollections(): Observable<Collection[]> {
     return this.http
       .get<Collection[]>(`${environment.apiUrl}/collections`)

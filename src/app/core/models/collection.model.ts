@@ -17,6 +17,7 @@ export interface Collection {
   itemCount?: number;
   totalValue?: number;
   totalCost?: number;
+  isFavorite?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null;

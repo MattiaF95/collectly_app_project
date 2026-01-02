@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CollectionService } from '../../core/services/collection.service';
 import { Collection } from '../../core/models/collection.model';
 import { CreateCollectionDialogComponent } from '../../shared/components/collection-choice-dialog/collection-choice-dialog.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -28,34 +30,21 @@ export class HomeComponent implements OnInit {
   private collectionService = inject(CollectionService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
-  totalCollections = 0;
-  totalItems = 0;
-  totalFavorites = 0;
-  totalValue = 0;
-  recentCollections: Collection[] = [];
+  favoriteCollections: Collection[] = [];
 
   ngOnInit() {
-    this.loadData();
-  }
+    this.collectionService.collections$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((collections) => {
+        this.favoriteCollections = collections
+          .filter((c) => c.isFavorite)
+          .slice(0, 4);
+      });
 
-  loadData() {
     this.collectionService.getCollections().subscribe({
-      next: (collections) => {
-        this.totalCollections = collections.length;
-        this.totalItems = collections.reduce(
-          (sum, c) => sum + (c.itemCount || 0),
-          0
-        );
-        this.totalValue = collections.reduce(
-          (sum, c) => sum + (c.totalValue || 0),
-          0
-        );
-        this.recentCollections = collections.slice(0, 4);
-      },
-      error: (error) => {
-        console.error('Errore caricamento dati:', error);
-      },
+      error: (error) => console.error('Errore caricamento dati:', error),
     });
   }
 

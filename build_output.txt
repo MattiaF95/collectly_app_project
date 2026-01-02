@@ -1,0 +1,67 @@
+
+> collectly@1.0.0 build
+> ng build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[33mÔØ»[39m Building...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-RT5UZO6O.js[39m    [2m | [22m[2m-[22m                          [2m | [22m[36m169.00 kB[39m[2m | [22m               [36m48.43 kB[39m
+[32mstyles-7JKK6RY4.css[39m  [2m | [22m[2mstyles[22m                     [2m | [22m [36m94.26 kB[39m[2m | [22m                [36m9.04 kB[39m
+[32mchunk-LDSNTQ7X.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m77.48 kB[39m[2m | [22m               [36m18.95 kB[39m
+[32mpolyfills-FFHMD2TL.js[39m[2m | [22m[2mpolyfills[22m                  [2m | [22m [36m34.52 kB[39m[2m | [22m               [36m11.28 kB[39m
+[32mchunk-XDYWJKAN.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m31.52 kB[39m[2m | [22m                [36m9.02 kB[39m
+[32mchunk-T7FDG4HW.js[39m    [2m | [22m[2m-[22m                          [2m | [22m  [36m9.29 kB[39m[2m | [22m                [36m3.20 kB[39m
+[32mmain-VGIUXE3M.js[39m     [2m | [22m[2mmain[22m                       [2m | [22m  [36m4.94 kB[39m[2m | [22m                [36m1.69 kB[39m
+[32mchunk-6HRZTB6M.js[39m    [2m | [22m[2m-[22m                          [2m | [22m  [36m1.61 kB[39m[2m | [22m              [36m612 bytes[39m
+[32mchunk-6MDQTQU3.js[39m    [2m | [22m[2m-[22m                          [2m | [22m[36m899 bytes[39m[2m | [22m              [36m899 bytes[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m              [2m | [22m[1m423.51 kB[22m[2m | [22m              [1m103.14 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-LY27RTDF.js[39m    [2m | [22m[2mapexcharts-common[22m          [2m | [22m[36m537.38 kB[39m[2m | [22m              [36m116.67 kB[39m
+[32mchunk-XLHT4PDB.js[39m    [2m | [22m[2mcollection-detail-component[22m[2m | [22m[36m137.84 kB[39m[2m | [22m               [36m24.55 kB[39m
+[32mchunk-PLZ2SJWC.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m69.87 kB[39m[2m | [22m               [36m17.14 kB[39m
+[32mchunk-3ZDOOSVU.js[39m    [2m | [22m[2mbrowser[22m                    [2m | [22m [36m63.63 kB[39m[2m | [22m               [36m16.87 kB[39m
+[32mchunk-RXSUIUHV.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m61.15 kB[39m[2m | [22m               [36m10.54 kB[39m
+[32mchunk-HILRNHV2.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m52.41 kB[39m[2m | [22m               [36m11.44 kB[39m
+[32mchunk-NU4MSD2B.js[39m    [2m | [22m[2mmain-layout-component[22m      [2m | [22m [36m37.76 kB[39m[2m | [22m                [36m8.13 kB[39m
+[32mchunk-XY65KDJU.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m36.24 kB[39m[2m | [22m                [36m7.81 kB[39m
+[32mchunk-NCTL3ETW.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m27.86 kB[39m[2m | [22m                [36m6.46 kB[39m
+[32mchunk-K747AEUT.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m27.75 kB[39m[2m | [22m                [36m3.67 kB[39m
+[32mchunk-TJWBGD3Z.js[39m    [2m | [22m[2m-[22m                          [2m | [22m [36m22.91 kB[39m[2m | [22m                [36m6.33 kB[39m
+[32mchunk-BUZJO7F7.js[39m    [2m | [22m[2mcollection-list-component[22m  [2m | [22m  [36m9.18 kB[39m[2m | [22m                [36m2.56 kB[39m
+[32mchunk-EGFUYD3O.js[39m    [2m | [22m[2m-[22m                          [2m | [22m  [36m8.82 kB[39m[2m | [22m                [36m2.19 kB[39m
+[32mchunk-IA6T56IK.js[39m    [2m | [22m[2mstatistics-component[22m       [2m | [22m  [36m8.68 kB[39m[2m | [22m                [36m2.52 kB[39m
+[32mchunk-JPGRGYSO.js[39m    [2m | [22m[2mhome-component[22m             [2m | [22m  [36m8.63 kB[39m[2m | [22m                [36m2.10 kB[39m
+[2m...and 10 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+Application bundle generation failed. [11.473 seconds]
+
+Ôû▓ [WARNING] angular:styles/component:scss;f37163ebf6bdd4f077e1116ae17538a9722e126711b5b2addc72fc8bdd8c97bb;C:/Users/lupo_/OneDrive/Desktop/VSCODE/collectly/src/app/features/collections/collection-list/collection-list.component.ts exceeded maximum budget. Budget 2.05 kB was not met by 1 bytes with a total of 2.05 kB.
+
+
+Ôû▓ [WARNING] src/app/features/home/home.component.scss exceeded maximum budget. Budget 2.05 kB was not met by 752 bytes with a total of 2.80 kB.
+
+
+Ôû▓ [WARNING] src/app/shared/components/collection-choice-dialog/collection-choice-dialog.component.scss exceeded maximum budget. Budget 2.05 kB was not met by 459 bytes with a total of 2.51 kB.
+
+
+Ôû▓ [WARNING] src/app/features/collections/collection-detail/collection-detail.component.scss exceeded maximum budget. Budget 2.05 kB was not met by 137 bytes with a total of 2.19 kB.
+
+
+Ôû▓ [WARNING] src/app/shared/components/add-collectible-dialog/add-collectible-dialog.component.scss exceeded maximum budget. Budget 2.05 kB was not met by 5.04 kB with a total of 7.09 kB.
+
+
+Ôû▓ [WARNING] Module 'apexcharts' used by 'node_modules/ng-apexcharts/fesm2022/ng-apexcharts.mjs' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+X [ERROR] src/app/shared/components/add-collectible-dialog/add-collectible-dialog.component.scss exceeded maximum budget. Budget 4.10 kB was not met by 2.99 kB with a total of 7.09 kB.
+
+

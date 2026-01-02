@@ -7,68 +7,42 @@
         <p>Gestisci le tue collezioni in modo semplice e organizzato</p>
     </div>
 
-    <div class="stats-section">
-        <mat-card class="stat-card">
-            <mat-icon>collections</mat-icon>
-            <div class="stat-value">{{ totalCollections }}</div>
-            <div class="stat-label">Collezioni</div>
-        </mat-card>
-
-        <mat-card class="stat-card">
-            <mat-icon>inventory_2</mat-icon>
-            <div class="stat-value">{{ totalItems }}</div>
-            <div class="stat-label">Oggetti</div>
-        </mat-card>
-
-        <mat-card class="stat-card">
-            <mat-icon>favorite</mat-icon>
-            <div class="stat-value">{{ totalFavorites }}</div>
-            <div class="stat-label">Preferiti</div>
-        </mat-card>
-
-        <mat-card class="stat-card">
-            <mat-icon>euro</mat-icon>
-            <div class="stat-value">€{{ totalValue.toFixed(0) }}</div>
-            <div class="stat-label">Valore Totale</div>
-        </mat-card>
-    </div>
 
     <div class="actions-section">
         <h2>Azioni Rapide</h2>
         <div class="action-cards">
             <mat-card class="action-card" (click)="navigateTo('/collections')">
-                <mat-icon>add_circle</mat-icon>
-                <h3>Nuova Collezione</h3>
-                <p>Crea una nuova collezione per i tuoi oggetti</p>
+                <div class="action-icon-container">
+                    <mat-icon>add_circle</mat-icon>
+                </div>
+                <div class="action-content">
+                    <h3>Nuova Collezione</h3>
+                    <p>Crea una nuova collezione per i tuoi oggetti</p>
+                </div>
             </mat-card>
 
             <mat-card class="action-card" (click)="navigateTo('/collections')">
-                <mat-icon>list</mat-icon>
-                <h3>Vedi Collezioni</h3>
-                <p>Visualizza e gestisci le tue collezioni esistenti</p>
-            </mat-card>
-
-            <mat-card class="action-card" (click)="navigateTo('/statistics')">
-                <mat-icon>bar_chart</mat-icon>
-                <h3>Statistiche</h3>
-                <p>Analizza le tue collezioni con grafici dettagliati</p>
-            </mat-card>
-
-            <mat-card class="action-card" (click)="navigateTo('/favorites')">
-                <mat-icon>favorite</mat-icon>
-                <h3>Preferiti</h3>
-                <p>Accedi rapidamente ai tuoi oggetti preferiti</p>
+                <div class="action-icon-container">
+                    <mat-icon>list</mat-icon>
+                </div>
+                <div class="action-content">
+                    <h3>Vedi Collezioni</h3>
+                    <p>Visualizza e gestisci le tue collezioni esistenti</p>
+                </div>
             </mat-card>
         </div>
     </div>
 
-    <div class="recent-section" *ngIf="recentCollections.length > 0">
-        <h2>Collezioni Recenti</h2>
+    <div class="recent-section" *ngIf="favoriteCollections.length > 0">
+        <h2>Collezioni Preferite</h2>
         <div class="recent-grid">
-            <mat-card *ngFor="let collection of recentCollections" class="collection-card"
+            <mat-card *ngFor="let collection of favoriteCollections" class="collection-card"
                 (click)="navigateTo('/collections/' + collection._id)">
                 <mat-card-header [style.background-color]="collection.color">
-                    <mat-card-title>{{ collection.name }}</mat-card-title>
+                    <mat-card-title>
+                        {{ collection.name }}
+                    </mat-card-title>
+                    <mat-icon class="favorite-heart">favorite</mat-icon>
                     <mat-card-subtitle *ngIf="collection.subtitle">
                         {{ collection.subtitle }}
                     </mat-card-subtitle>

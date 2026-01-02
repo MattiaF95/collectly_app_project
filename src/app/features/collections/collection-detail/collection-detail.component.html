@@ -4,12 +4,30 @@
             <mat-icon>arrow_back</mat-icon>
         </button>
         <div class="header-content">
-            <h1>{{ collection.name }}</h1>
+            <h1>
+                {{ collection.name }}
+                <mat-icon *ngIf="collection.isFavorite" class="favorite-heart">favorite</mat-icon>
+            </h1>
             <p *ngIf="collection.subtitle">{{ collection.subtitle }}</p>
         </div>
-        <button mat-icon-button>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
         </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="toggleCollectionFavorite()"
+                *ngIf="!collection.isFavorite && canAddFavorite()">
+                <mat-icon>favorite_border</mat-icon>
+                <span>Aggiungi ai preferiti</span>
+            </button>
+            <button mat-menu-item (click)="toggleCollectionFavorite()" *ngIf="collection.isFavorite">
+                <mat-icon>favorite</mat-icon>
+                <span>Rimuovi dai preferiti</span>
+            </button>
+            <button mat-menu-item (click)="goBack()">
+                <mat-icon>list</mat-icon>
+                <span>Torna alla lista</span>
+            </button>
+        </mat-menu>
     </div>
 
     <div class="content">

@@ -12,6 +12,8 @@ import {
   COLLECTION_TYPES,
 } from '../../../core/models/collection.model';
 import { CreateCollectionDialogComponent } from '../../../shared/components/collection-choice-dialog/collection-choice-dialog.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
 
 @Component({
   selector: 'app-collection-list',
@@ -53,6 +55,20 @@ import { CreateCollectionDialogComponent } from '../../../shared/components/coll
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
+              <button
+                mat-menu-item
+                (click)="toggleCollectionFavorite(collection)"
+                *ngIf="collection.isFavorite || canAddFavorite()"
+              >
+                <mat-icon>{{
+                  collection.isFavorite ? 'favorite' : 'favorite_border'
+                }}</mat-icon>
+                <span>{{
+                  collection.isFavorite
+                    ? 'Rimuovi dai preferiti'
+                    : 'Aggiungi ai preferiti'
+                }}</span>
+              </button>
               <button mat-menu-item (click)="editCollection(collection)">
                 <mat-icon>edit</mat-icon>
                 <span>Modifica</span>
@@ -65,7 +81,12 @@ import { CreateCollectionDialogComponent } from '../../../shared/components/coll
           </div>
 
           <mat-card-content>
-            <h2>{{ collection.name }}</h2>
+            <h2>
+              {{ collection.name }}
+              <mat-icon *ngIf="collection.isFavorite" class="favorite-heart"
+                >favorite</mat-icon
+              >
+            </h2>
             <p *ngIf="collection.subtitle">{{ collection.subtitle }}</p>
 
             <div class="stats">
@@ -167,6 +188,16 @@ import { CreateCollectionDialogComponent } from '../../../shared/components/coll
               color: #2c3e50;
               margin: 0 0 0.5rem 0;
               font-size: 1.5rem;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+
+              .favorite-heart {
+                color: #e74c3c;
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+              }
             }
 
             p {
@@ -231,22 +262,53 @@ export class CollectionListComponent implements OnInit {
   private readonly collectionService = inject(CollectionService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   collections: Collection[] = [];
 
   ngOnInit() {
+    this.collectionService.collections$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((collections) => {
+        this.collections = collections;
+      });
+
     this.loadCollections();
   }
 
   loadCollections() {
     this.collectionService.getCollections().subscribe({
-      next: (collections) => {
-        this.collections = collections;
-      },
-      error: (error) => {
-        console.error('Errore caricamento collezioni:', error);
-      },
+      error: (error) => console.error('Errore caricamento collezioni:', error),
     });
+  }
+
+  // Verifica se è possibile aggiungere un'altra collezione ai preferiti
+  canAddFavorite(): boolean {
+    const favoriteCount = this.collections.filter((c) => c.isFavorite).length;
+    return favoriteCount < 4;
+  }
+
+  // Toggle favorito collezione
+  toggleCollectionFavorite(collection: Collection) {
+    if (!collection?._id) return;
+
+    if (!collection.isFavorite && !this.canAddFavorite()) {
+      alert('Puoi avere al massimo 4 collezioni preferite.');
+      return;
+    }
+
+    const updatedData: Partial<Collection> = {
+      isFavorite: !collection.isFavorite,
+    };
+
+    this.collectionService
+      .updateCollection(collection._id, updatedData)
+      .subscribe({
+        error: (error) => {
+          console.error("Errore durante l'aggiornamento del favorito:", error);
+          alert("Errore durante l'aggiornamento del favorito");
+        },
+      });
   }
 
   createCollection() {
